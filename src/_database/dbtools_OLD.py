@@ -1,33 +1,5 @@
 import pymysql
 
-invalidChars = {"%", "$", "#", "@", "!", "&", "?", ":", "'"}
-def checkStrValidity(strToCheck):
-	result = 0
-	for ch in invalidChars:
-		if ch in strToCheck:
-			result += 1
-	if result > 0:
-		return strToCheck + ' '
-	else:
-		return strToCheck
-
-# created database "Backup"
-# created table "users" in database "Backup"
-# which has fields "user_name" and "pwd"
-# User ID: "root"
-# PW: j4q5x9D#1
-
-def openDatabaseConnection(host, username, pw, db_name):
-	try:
-		db = pymysql.connect(host, username, pw, db_name)
-	except:
-		print(f"Failed to connect to database {db_name}.")
-		return None
-	return db
-
-def getDatabaseCursor(db):
-	return db.cursor()
-
 
 '''
 '
