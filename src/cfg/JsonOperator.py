@@ -1,4 +1,4 @@
-import json as json
+import json
 
 class JsonOperator:
 	def __init__(self, configurationManager):
@@ -11,6 +11,9 @@ class JsonOperator:
 
 	def load(self, file):
 		return json.load(file)
+
+	def dump(self, data, file):
+		return json.dump(data, file)
 
 
 	'''

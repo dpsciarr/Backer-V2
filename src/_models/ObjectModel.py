@@ -106,7 +106,7 @@ class ObjectModel:
 						procedureObject = Procedure(identifier = procedure[0], procName = procedure[1], source = procedure[2], destination = procedure[3], collectionID = procedure[4], operationID = procedure[5])
 						collectionObject.addProcedure(procedureObject)
 
-					self.currentUser.addCollection(collection)
+					self.currentUser.addCollection(collectionObject)
 
 
 	def buildConfigurationModel(self):
@@ -350,6 +350,7 @@ class Collection:
 	def __init__(self, identifier, collectionName, userID):
 		self._collectionID = identifier
 		self._collectionName = collectionName
+		self._operationID = -1
 		self._userID = userID
 		self._procedures = {}
 
@@ -368,7 +369,14 @@ class Collection:
 	@property
 	def collectionName(self):
 		return self._collectionName
+
+	@property
+	def operationID(self):
+		return self._operationID
 	
+	@operationID.setter
+	def operationID(self, value):
+		self._operationID = value
 	
 	@property
 	def procedures(self):
@@ -431,7 +439,7 @@ class Procedure:
 		self._sourcePath = source
 		self._destinationPath = destination
 		self._collectionID = collectionID
-		self._operationID, operationID
+		self._operationID = operationID
 
 		self._selectedForRunConfig = False
 

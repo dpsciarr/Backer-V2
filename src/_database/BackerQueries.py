@@ -101,7 +101,7 @@ class BackerQueries:
 		deviceID = devID
 
 		self.operator.openDatabase()
-		sql = f"""SELECT * FROM {table} WHERE {field} = 'device_id'"""
+		sql = f"""SELECT * FROM {table} WHERE {field} = '{deviceID}'"""
 		self.operator.setCursor()
 		self.operator.execute(sql)
 		headers = [x[0] for x in self.operator.cursor.description]
@@ -113,3 +113,66 @@ class BackerQueries:
 			struct.update(dict(zip(headers, result)))
 			
 		return struct
+
+	'''
+	getCollectionsDictFromDatabase(userID)
+
+	Returns collection data as a struct (for building JSON structs)
+	
+	'userID' specifies the user ID the collections is associated with
+	'''
+	def getCollectionsDictFromDatabase(self, userID):
+		table = "collections"
+		field = "user_id"
+		user_id = userID
+
+		self.operator.openDatabase()
+		sql = f"""SELECT * FROM {table} WHERE {field} = '{userID}'"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		headers = [x[0] for x in self.operator.cursor.description]
+		data = self.operator.fetchall()
+		self.operator.closeDatabase()
+
+		return headers, data
+
+	'''
+	getProceduresDictFromDatabase(collID)
+
+	Returns procedure data as a struct (for building JSON structs)
+	
+	'collID' specifies the collection ID the procedures are associated with
+	'''
+	def getProceduresDictFromDatabase(self, collID):
+		table = "procedures"
+		field = "collection_id"
+		coll_id = collID
+
+		self.operator.openDatabase()
+		sql = f"""SELECT * FROM {table} WHERE {field} = '{coll_id}'"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		headers = [x[0] for x in self.operator.cursor.description]
+		data = self.operator.fetchall()
+		self.operator.closeDatabase()
+
+		return headers, data
+
+	'''
+	getDriveLetterForDeviceFromDatabase(devID)
+	'''
+
+	def getDriveLetterForDeviceFromDatabase(self, devID):
+		table = "drives"
+		device_id = devID
+		select = "drive_letter"
+
+		self.operator.openDatabase()
+		sql = f"""SELECT {select} FROM {table} WHERE device_id = {device_id}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		headers = [x[0] for x in self.operator.cursor.description]
+		data = self.operator.fetchall()
+		self.operator.closeDatabase()
+
+		return headers, data

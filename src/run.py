@@ -139,7 +139,11 @@ class Application:
 		self.configurationManager.configFileSyncronized = self.sourceCongruencyCheck()
 
 		#Drive Existence
+		self.driveExistence = self.driveExistenceCheck()
+
 		#Object Model Construction
+
+		
 		#Object Model Congruency Check
 
 		# Setup Configuration Screen and Display Frame needed
@@ -194,28 +198,93 @@ class Application:
 			drvList = []
 			device["drives"] = []
 			devID = device["device_id"]
-			drvData = self.databaseOperator.queries.getDrivesDictFromDatabase(strUserID)
+			drvData = self.databaseOperator.queries.getDrivesDictFromDatabase(devID)
 			drvList.append(drvData)
 			device["drives"] = drvList
 
-		print(userStruct)
+		#Get Collection Data
+		collDataHeaders, collData = self.databaseOperator.queries.getCollectionsDictFromDatabase(strUserID)
+		collList = []
+		for result in collData:
+			collStruct = {}
+			for result2 in result:
+				collStruct = dict(zip(collDataHeaders, result))
+			collList.append(collStruct)
+		userStruct[strUserID]["collections"] = collList
 
-		# 2. dump the database JSON file into a temp file
+		#Get Procedure
+		for collection in userStruct[strUserID]["collections"]:
+			collection["procedures"] = []
+			collID = collection["collection_id"]
+			procDataHeaders, procData = self.databaseOperator.queries.getProceduresDictFromDatabase(collID)
 
-		# 3. Request the configuration file
+			procStruct = {}
+			procList = []
+			for result in procData:
+				procStruct = dict(zip(procDataHeaders, result))
+				procList.append(procStruct)
+			collection["procedures"] = procList
 
-		# 4. Request the newly created temp file based on the database
+		databaseData = userStruct
+		with open(os.path.join(self.configDirectory, "temp.txt"), 'w') as dumpFile:
+			self.configurationManager.jsonOperator.dump(databaseData, dumpFile)
 
-		# 5. compare the two files
+		dbDataFromFile = ""
+		with open(os.path.join(self.configDirectory, "temp.txt"), 'r') as dbFile:
+			dbDataFromFile = self.configurationManager.jsonOperator.load(dbFile)
 
-		# 6. Output to Manager
+		configData = ""
+		with open(os.path.join(self.configDirectory, "config.cfg"), 'r') as cfgFile:
+			configData = self.configurationManager.jsonOperator.load(cfgFile)
 
-		# 7. Return True/False
+
+		if configData == dbDataFromFile:
+			self.outputManager.broadcast(f"   Configuration File syncronized with database for user '{self.currentUser}'.")
+			return True
+		else:
+			self.outputManager.broadcast(f"   WARNING: Configuration file NOT syncronized with database.")
+			return False
+
+	'''
+	driveExistenceCheck()
+
+	Looks up the drives associated with the current user (source of this information varies based on informationSource variable)
+
+	Checks to see if the configured drives actually exist.
+	'''
+
+	def driveExistenceCheck(self):
+		self.outputManager.broadcast("Performing Drive Existence Check . . .")
+		strUserID = str(self.currentUserID)
+
+		if self._informationSource == source.SOURCE_DATABASE or self._informationSource == source.SOURCE_DATABASE_NO_CFG:
+			d1, d2 = self.databaseOperator.queries.getDevicesDictFromDatabase(strUserID)
+			dlist = []
+			for result in d2:
+				d = dict(zip(d1, result))
+				dlist.append(d)
+
+			for item in dlist:
+				devID = item["device_id"]
+
+				headers, data = self.databaseOperator.queries.getDriveLetterForDeviceFromDatabase(devID)
+
+				try:
+					drivesDict = dict(zip(headers, data[0][0]))
+					for drive in drivesDict["drive_letter"]:
+						string = str(drive) + ":\\\\"
+						if os.path.isdir(string):
+							self.outputManager.broadcast(f"   {string} Drive found.")
+						else:
+							self.outputManager.broadcast(f"   WARNING: {string} Drive Not Found. Connect drive before running backup.")
+							return False
+				except Exception as e:
+					print(e)
+					return False
 
 		return True
 
 
-		
 
 
 
