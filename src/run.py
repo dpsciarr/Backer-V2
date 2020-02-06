@@ -337,6 +337,18 @@ class OutputManager:
 		self._textBox.config(state='disabled')
 		self._textBox.yview_moveto(1)
 
+
+
+
+
+
+
+
+
+
+
+		
+
 if __name__ == '__main__':
 	#start application
 	app = Application()
