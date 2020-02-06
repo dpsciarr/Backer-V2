@@ -57,8 +57,10 @@ class ApplicationWindow(tk.Tk):
 		self.mainFrame.grid(row=1, column=1, rowspan=1, columnspan=2, sticky="NEWS")
 		self.outputFrame.grid(row=2, column=1, rowspan=1, columnspan=2, sticky="NEWS")
 
-
 		self.after(500, lambda: self.focus_force())
+
+		self.application.initializeApplication()
+
 		self.mainloop()
 
 	@property

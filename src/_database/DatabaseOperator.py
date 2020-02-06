@@ -45,6 +45,10 @@ class DatabaseOperator:
 		return self._toolset
 
 	@property
+	def cursor(self):
+		return self._cursor
+
+	@property
 	def queries(self):
 		return self._queries
 
@@ -139,3 +143,55 @@ class DatabaseOperator:
 	'''
 	def checkInsertData(self, insertData):
 		return self.toolset.checkInsertData(insertData)
+
+	'''
+	checkConnection()
+
+	Checks the connection status with the database.
+
+	Returns True if database is found and able to connect.
+	'''
+	def checkConnection(self):
+		self.application.outputManager.broadcast("Checking Database Connectivity . . .")
+		databaseFound = False
+		databaseConnected = False
+
+		try:
+			self.openDatabase()
+		except Exception as e:
+			self.application.outputManager.broadcast("!!!   WARNING: No Connection to Database")
+		else:
+			sql1 = """SELECT sqlite_version()"""
+			self.setCursor()
+			self.execute(sql1)
+			self.commit()
+			version = self.fetchall()
+
+			sql2 = """PRAGMA database_list"""
+			self.setCursor()
+			self.execute(sql2)
+			self.commit()
+			dbInfo = self.fetchall()
+
+			if version is not None:
+				self.application.outputManager.broadcast("   DATABASE CONNECTION FOUND")
+				databaseConnected = True
+			else:
+				self.application.outputManager.broadcast("   DATABASE CONNECTION LOST")
+				databaseFound = False
+
+			if dbInfo is not None:
+				self.application.outputManager.broadcast("   DATABASE FOUND")
+				databaseFound = True
+			else:
+				self.application.outputManager.broadcast("   DATABASE NOT FOUND")
+				databaseFound = False
+
+			self.closeDatabase()
+			
+			if databaseFound and databaseConnected:
+				return True
+			else:
+				return False
+
+

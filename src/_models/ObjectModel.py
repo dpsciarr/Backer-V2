@@ -2,146 +2,170 @@ import json
 
 class ObjectModel:
 	def __init__(self, application):
-		print("Hi, I host the application's object model!")
+		self._currentUser = None
+		self._application = application
+
+	@property
+	def currentUser(self):
+		return self._currentUser
+
+	@currentUser.setter
+	def currentUser(self, value):
+		self._currentUser = value
+
+	@property
+	def application(self):
+		return self._application
+	
+	
 
 	def buildDatabaseModel(self):
-		print("Building model from database...")
-	
+		userID = self.application.currentUserID
+		userName = self.application.currentUser
+		userPasscode = ""
 
-	'''
-	def buildModelFromDatabase(self):
-		userID = self.mainController.getCurrentUserID()
-		userName = self.mainController.getCurrentUser()
+		userData = ""
+		try:
+			self.application.databaseOperator.openDatabase()
+			sql = f"""SELECT passcode FROM users WHERE user_id = '{userID}'"""
+			self.application.databaseOperator.setCursor()
+			self.application.databaseOperator.execute(sql)
+			userData = self.application.databaseOperator.fetchall()
+			self.application.databaseOperator.closeDatabase()
+		except Exception as e:
+			print(e)
 
-		sql = f"""SELECT pwd FROM users WHERE user_id = '{userID}'"""
-		pwd = self.modelController.queryDatabase(sql)[0][0]
-		self.currentUser = User(userID, userName, pwd)
-
-		sql = f"""SELECT * FROM devices WHERE device_user = '{userID}'"""
-		devices = self.modelController.queryDatabase(sql)
-		for item in devices:
-			dev = Device(id=item[0], name=item[1], user=item[2])
-			
-			sql = f"""SELECT * FROM drives WHERE associated_device = '{item[0]}'"""
-			drives = self.modelController.queryDatabase(sql)
-			for drive in drives:
-				drv = Drive(id=drive[0], letter=drive[1], name=drive[2], device=drive[3])
-				dev.addDrive(drv)
-
-			self.currentUser.addDevice(dev)
-
-
-		sql = f"""SELECT * FROM collections WHERE collection_creator = '{userName}'"""
-		collections = self.modelController.queryDatabase(sql)
-		for item in collections:
-			coll = Collection(id=item[0], name=item[1], creator=item[2])
-
-			sql = f"""SELECT * FROM procedures WHERE member_of = '{item[0]}'"""
-			procs = self.modelController.queryDatabase(sql)
-			for proc in procs:
-				p = Procedure(id=proc[0], name=proc[5], src=proc[1], dest=proc[2], collection=proc[3], operation=proc[4])
-				coll.addProcedure(p)
-
-			self.currentUser.addCollection(coll)
+		if len(userData) > 0:
+				userPasscode = userData[0][0]
+				self.currentUser = User(userID, userName, userPasscode)
 
 
 
-	'''
+		if userData != "":
+			deviceData = ""
+			collectionData = ""
+
+			try:
+				self.application.databaseOperator.openDatabase()
+				sql = f"""SELECT * FROM devices WHERE user_id = '{userID}'"""
+				self.application.databaseOperator.setCursor()
+				self.application.databaseOperator.execute(sql)
+				deviceData = self.application.databaseOperator.fetchall()
+				self.application.databaseOperator.closeDatabase()
+			except Exception as e:
+				print(e)
+
+			if len(deviceData) > 0:
+				for device in deviceData:
+					deviceObject = Device(identifier = device[0], name = device[1], user = device[2])
+
+					driveData = ""
+					try:
+						self.application.databaseOperator.openDatabase()
+						sql = f"""SELECT * FROM drives WHERE device_id = '{device[0]}'"""
+						self.application.databaseOperator.setCursor()
+						self.application.databaseOperator.execute(sql)
+						driveData = self.application.databaseOperator.fetchall()
+						self.application.databaseOperator.closeDatabase()
+					except Exception as e:
+						print(e)
+
+					if len(driveData) > 0:
+						for drive in driveData:
+							driveObject = Drive(identifier=drive[0], driveLetter=drive[1], driveName=drive[2], deviceID=drive[3])
+							deviceObject.addDrive(driveObject)
+
+					self.currentUser.addDevice(deviceObject)
+
+			try:
+				self.application.databaseOperator.openDatabase()
+				sql = f"""SELECT * FROM collections WHERE user_id = '{userID}'"""
+				self.application.databaseOperator.setCursor()
+				self.application.databaseOperator.execute(sql)
+				collectionData = self.application.databaseOperator.fetchall()
+				self.application.databaseOperator.closeDatabase()
+			except Exception as e:
+				print(e)
+
+			if len(collectionData) > 0:
+				for collection in collectionData:
+					collectionObject = Collection(identifier = collection[0], collectionName = collection[1], userID = collection[2])
+
+					procedureData = ""
+					try:
+						self.application.databaseOperator.openDatabase()
+						sql = f"""SELECT * FROM procedures WHERE collection_id = '{collection[0]}'"""
+						self.application.databaseOperator.setCursor()
+						self.application.databaseOperator.execute(sql)
+						procedureData = self.application.databaseOperator.fetchall()
+						self.application.databaseOperator.closeDatabase()
+					except Exception as e:
+						print(e)
+
+					for procedure in procedureData:
+						procedureObject = Procedure(identifier = procedure[0], procName = procedure[1], source = procedure[2], destination = procedure[3], collectionID = procedure[4], operationID = procedure[5])
+						collectionObject.addProcedure(procedureObject)
+
+					self.currentUser.addCollection(collection)
+
+
 	def buildConfigurationModel(self):
 		print("Building model from configuration file...")
-	
+		userID = self.application.currentUserID
+		userName = self.application.currentUser
+		userPasscode = ""
 
-	'''
-	def buildModelFromConfigFile(self):
-		userID = self.mainController.getCurrentUserID()
-		userName = self.mainController.getCurrentUser()
+		with open(application.configurationManager.configPath, 'r') as configFile:
+			configJSON = json.load(configFile)
 
-		#need to get configuration file contents
-		cfgFilePath = self.modelController.requestConfigFilePath()
-
-		with open(cfgFilePath, 'r') as cfgFile:
-			cfgJSON = json.load(cfgFile)
-
-		userConfig = ""
-		try:
-			userConfig = cfgJSON[userID]
-		except Exception as e:
-			userConfig = cfgJSON[str(userID)]
-
-		#get user information
-		pwd = userConfig["pwd"]
-		self.currentUser = User(userID, userName, pwd)
+		userConfiguration = configJSON[userID]
 		
-		#get devices information
-		for dev in userConfig["devices"]:
-			devID = dev["device_id"]
-			devName = dev["device_name"]
-			devUser = dev["device_user"]
+		userPasscode = userConfiguration["passcode"]
 
-			device = Device(devID, devName, devUser)
-			self.currentUser.addDevice(device)
+		self.currentUser = User(userID, userName, userPasscode)
 
-			drvs = dev["drives"]
-			for drv in drvs:
-				drvID = drv["drive_id"]
-				drvLetter = drv["drive_letter"]
-				drvName = drv["drive_name"]
-				drvDevice = drv["associated_device"]
+		for device in userConfiguration["devices"]:
+			deviceID = device["device_id"]
+			deviceName = device["device_name"]
+			deviceUser = device["user_id"]
 
-				drive = Drive(drvID, drvLetter, drvName, drvDevice)
-				device.addDrive(drive)
+			deviceObject = Device(deviceID, deviceName, deviceUser)
 
-		for coll in userConfig["collections"]:
-			collID = coll["collection_id"]
-			collName = coll["collection_name"]
-			collCreator = coll["collection_creator"]
+			drives = device["drives"]
+			for drive in drives:
+				drive_id = drive["drive_id"]
+				drive_letter = drive["drive_letter"]
+				drive_name = drive["drive_name"]
+				device_id = drive["drive_id"]
 
-			collection = Collection(collID, collName, collCreator)
-			self.currentUser.addCollection(collection)
-
-			procs = coll["procedures"]
-			for proc in procs:
-				procNum = proc["proc_num"]
-				procName = proc["proc_name"]
-				procSrc = proc["src_path"]
-				procDest = proc["dest_path"]
-				procColl = proc["member_of"]
-				procOp = proc["op_code"]
-
-				procedure = Procedure(procNum, procName, procSrc, procDest, procColl, procOp)
-				collection.addProcedure(procedure)
-	'''
+				driveObject = Drive(identifier = drive_id, driveLetter = drive_letter, driveName = drive_name, deviceID = device_id)
+				deviceObject.addDrive(driveObject)
 
 
+			self.currentUser.addDevice(deviceObject)
 
 
+		for collection in userConfiguration["collections"]:
+			collectionID = collection["collection_id"]
+			collectionName = collection["collection_name"]
+			userID = collection["user_id"]
+
+			collectionObject = Collection(identifier=collectionID, collectionName = collectionName, userID = userID)
+
+			procedures = collection["procedures"]
+			for procedure in procedures:
+				procedureID = procedure["procedure_id"]
+				procedureName = procedure["procedure_name"]
+				procedureSource = procedure["procedure_source"]
+				procedureDestination = procedure["procedure_destination"]
+				collectionID = procedure["collection_id"]
+				procedureOp = procedure["operation_id"]
+
+				procedureObject = Procedure(identifier=procedureID, procName = procedureName, source = procedureSource, destination = procedureDestination, collectionID = collection_id, operationID = operationID)
+				collectionObject.addProcedure(procedureObject)
 
 
-
-
-
-
-
-class BackerObject():
-	def __init__(self):
-		self._identifier = -1
-		self._name = ""
-
-	@property
-	def identifier(self):
-		return self._identifier
-	
-	@identifier.setter
-	def identifier(self, value):
-		self._identifier = value
-
-	@property
-	def name(self):
-		return self._name
-
-	@name.setter
-	def name(self, value):
-		self._name = value
+			self.currentUser.addCollection(collectionObject)
 
 
 
@@ -151,15 +175,23 @@ class BackerObject():
 
 
 
-class User(BackerObject):
+
+
+
+
+
+
+class User:
 	def __init__(self, identifier, name, passcode):
 		self._userID = identifier
 		self._username = name
 		self._passcode = passcode
-		super().identifier = self._userID
-		super().name = self._username
 		self._devices = {}
 		self._collections = {}
+
+	@property
+	def userID(self):
+		return self._userID
 
 	@property
 	def passcode(self):
@@ -179,10 +211,10 @@ class User(BackerObject):
 
 	
 	def addCollection(self, collection):
-		self.collections[collection.identifier] = collection
+		self.collections[collection.collectionID] = collection
 	
 	def addDevice(self, device):
-		self.devices[device.identifier] = device
+		self.devices[device.deviceID] = device
 
 	def getCollection(self, collID):
 		if len(self.collections) > 0 and self.collections[collID] is not None:
@@ -215,14 +247,21 @@ class User(BackerObject):
 
 
 
-class Device(BackerObject):
+class Device:
 	def __init__(self, identifier, name, user):
 		self._deviceID = identifier
 		self._deviceName = name
 		self._deviceUser = user
-		super().identifier = self._identifier
-		super().name = self._deviceName
 		self._drives = {}
+
+	@property
+	def deviceID(self):
+		return self._deviceID
+
+	@property
+	def deviceName(self):
+		return self._deviceName
+	
 
 	@property
 	def deviceUser(self):
@@ -237,7 +276,7 @@ class Device(BackerObject):
 		return self._drives
 
 	def addDrive(self, drive):
-		self.drives[drive.identifier] = drive
+		self.drives[drive.driveID] = drive
 
 	def getDrive(self, driveID):
 		if len(self.drives) > 0 and self.drives[driveID] is not None:
@@ -262,14 +301,12 @@ class Device(BackerObject):
 
 
 
-class Drive(BackerObject):
+class Drive:
 	def __init__(self, identifier, driveLetter, driveName, deviceID):
 		self._driveID = identifier
 		self._driveLetter = driveLetter
 		self._driveName = driveName
 		self._deviceID = deviceID
-		super().identifier = self._driveID
-		super().name = self._driveName
 
 	@property
 	def driveLetter(self):
@@ -279,6 +316,14 @@ class Drive(BackerObject):
 	def deviceID(self):
 		return self._deviceID
 
+	@property
+	def driveName(self):
+		return self._driveName
+	
+	@property
+	def driveID(self):
+		return self._driveID
+	
 	@driveLetter.setter
 	def driveLetter(self, value):
 		self._driveLetter = value
@@ -301,13 +346,11 @@ class Drive(BackerObject):
 
 
 	
-class Collection(BackerObject):
+class Collection:
 	def __init__(self, identifier, collectionName, userID):
 		self._collectionID = identifier
 		self._collectionName = collectionName
 		self._userID = userID
-		super().identifier = self._collectionID
-		super().name = self._collectionName
 		self._procedures = {}
 
 	@property
@@ -319,11 +362,20 @@ class Collection(BackerObject):
 		self._userID = value
 
 	@property
+	def collectionID(self):
+		return self._collectionID
+
+	@property
+	def collectionName(self):
+		return self._collectionName
+	
+	
+	@property
 	def procedures(self):
 		return self._procedures
 	
 	def addProcedure(self, procedure):
-		self._procedures[procedure.identifier] = procedure
+		self._procedures[procedure.procedureID] = procedure
 
 	def getProcedure(self, procID):
 		if len(self._procedures) > 0 and self._procedures[procID] is not None:
@@ -372,7 +424,7 @@ class Collection(BackerObject):
 
 
 
-class Procedure(BackerObject):
+class Procedure:
 	def __init__(self, identifier, procName, source, destination, collectionID, operationID):
 		self._procedureID = identifier
 		self._procedureName = procName
@@ -382,8 +434,10 @@ class Procedure(BackerObject):
 		self._operationID, operationID
 
 		self._selectedForRunConfig = False
-		super().identifier = self._procedureID
-		super().name = self._procedureName
+
+	@property
+	def procedureID(self):
+		return self._procedureID
 
 	@property
 	def sourcePath(self):

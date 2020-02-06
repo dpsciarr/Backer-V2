@@ -1,13 +1,15 @@
-import json
 import os.path
+from JsonOperator import JsonOperator as jsonOperator
 
 class ConfigurationManager:
 	def __init__(self, application):
 		self._application = application
+		self._jsonOperator = jsonOperator(self)
 
 		self._configurationOK = False
 		self._configurationFilePresent = False
 		self._configurationFileValidJSON = False
+		self._configFileSyncronized = False
 
 		self._runConfigurationOK = False
 		self._runConfigurationFilePresent = False
@@ -23,6 +25,10 @@ class ConfigurationManager:
 	def application(self):
 		return self._application
 
+	@property
+	def jsonOperator(self):
+		return self._jsonOperator
+	
 	@property
 	def configPath(self):
 		return self._configPath
@@ -57,6 +63,14 @@ class ConfigurationManager:
 		self._configurationFileValidJSON = value
 
 	@property
+	def configFileSyncronized(self):
+		return self._configFileSyncronized
+
+	@configFileSyncronized.setter
+	def configFileSyncronized(self, value):
+		self._configFileSyncronized = value
+
+	@property
 	def runConfigurationFilePresent(self):
 		return self._runConfigurationFilePresent
 
@@ -89,7 +103,7 @@ class ConfigurationManager:
 		if self.configurationFilePresent == True:
 			try:
 				with open(self.configPath) as f:
-					json.load(f)
+					self.jsonOperator.load(f)
 				self.configurationFileValidJSON = True
 				return True
 			except ValueError as e:
@@ -115,11 +129,56 @@ class ConfigurationManager:
 		if self.runConfigurationFilePresent == True:
 			try:
 				with open(self.runConfigPath) as f:
-					json.load(f)
+					self.jsonOperator.load(f)
 				self.runConfigurationFileValidJSON = True
 				return True
 			except ValueError as e:
 				self.runConfigurationFileValidJSON = False
 				return False
+		else:
+			return False
+
+	'''
+	checkTotalConfiguration()
+
+	Checks the existence of all configuration files and validates their formatting.
+	
+	Return True if main configuration file exists and has valid formatting.
+	'''
+	def checkAllConfiguration(self):
+		self.application.outputManager.broadcast("Checking Configuration Files . . .")
+
+		#Check if configuration file exists
+		if self.application.databaseOperator.toolset.isFile(self._configPath):
+			self.configurationFilePresent = True
+			self.application.outputManager.broadcast("   Main Configuration File: FOUND")
+		else:
+			self.configurationFilePresent = False
+			self.application.outputManager.broadcast("   Main Configuration File: NOT FOUND")
+
+		#Check if the run configuration file exists
+		if self.application.databaseOperator.toolset.isFile(self._runConfigPath):
+			self.runConfigurationFilePresent = True
+			self.application.outputManager.broadcast("   Run Configuration File: FOUND")
+		else:
+			self.runConfigurationFilePresent = False
+			self.application.outputManager.broadcast("   Run Configuration File: NOT FOUND")
+		
+		mainConfigValid = False
+		runConfigValid = False
+		if self.configurationFilePresent:
+			if self.checkConfiguration():
+				self.application.outputManager.broadcast("   Main Configuration File: VALIDATED")
+			else:
+				self.application.outputManager.broadcast("   Main Configuration File: NOT VALID")
+
+		if self.runConfigurationFilePresent:
+			if self.checkRunConfiguration():
+				self.application.outputManager.broadcast("   Run Configuration File: VALIDATED")
+			else:
+				self.application.outputManager.broadcast("   Run Configuration File: NOT VALID")
+
+		if self.configurationFilePresent and self.checkConfiguration():
+			return True
 		else:
 			return False
