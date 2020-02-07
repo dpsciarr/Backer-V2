@@ -16,8 +16,18 @@ class ObjectModel:
 	@property
 	def application(self):
 		return self._application
-	
-	
+
+	def buildObjectModel(self, infoSource):
+		self.application.outputManager.broadcast("Constructing Object Model . . .")
+		self.application.outputManager.broadcast(f"   Current Information Source: {infoSource.name}")
+		if infoSource.name == "SOURCE_DATABASE" or infoSource.name == "SOURCE_DATABASE_NO_CFG":
+			self.buildDatabaseModel()
+			self.application.outputManager.broadcast("   Object Model constructed from database.")
+		elif infoSource.name == "SOURCE_CONFIG_NO_DB":
+			print("buildObjectModel(infoSource) needs behaviour for Configuration File infoSource")
+		else:
+			self.application.outputManager.broadcast("   WARNING: No information source available.")
+			self.application.outputManager.broadcast("     Must be connected to a database to use this application.")	
 
 	def buildDatabaseModel(self):
 		userID = self.application.currentUserID
@@ -72,7 +82,7 @@ class ObjectModel:
 
 					if len(driveData) > 0:
 						for drive in driveData:
-							driveObject = Drive(identifier=drive[0], driveLetter=drive[1], driveName=drive[2], deviceID=drive[3])
+							driveObject = Drive(identifier=drive[0], driveName=drive[1], driveLetter=drive[2], deviceID=drive[3])
 							deviceObject.addDrive(driveObject)
 
 					self.currentUser.addDevice(deviceObject)
@@ -136,7 +146,7 @@ class ObjectModel:
 				drive_id = drive["drive_id"]
 				drive_letter = drive["drive_letter"]
 				drive_name = drive["drive_name"]
-				device_id = drive["drive_id"]
+				device_id = drive["device_id"]
 
 				driveObject = Drive(identifier = drive_id, driveLetter = drive_letter, driveName = drive_name, deviceID = device_id)
 				deviceObject.addDrive(driveObject)
@@ -192,6 +202,11 @@ class User:
 	@property
 	def userID(self):
 		return self._userID
+
+	@property
+	def username(self):
+		return self._username
+	
 
 	@property
 	def passcode(self):
@@ -447,6 +462,10 @@ class Procedure:
 	def procedureID(self):
 		return self._procedureID
 
+	@property
+	def procedureName(self):
+		return self._procedureName
+	
 	@property
 	def sourcePath(self):
 		return self._sourcePath

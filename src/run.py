@@ -40,6 +40,8 @@ class Application:
 		print("Initializing Backer V2...")
 		self._databaseName = "backer.db"
 		self._informationSource = source.NO_SOURCE
+		self._objectModelSyncronized = False
+		self._driveExistence = False
 
 		self._srcDirectory = os.path.dirname(os.path.abspath(__file__))
 		self._applicationDirectory = os.path.dirname(self._srcDirectory)
@@ -76,6 +78,30 @@ class Application:
 		return self._configDirectory
 
 	@property
+	def informationSource(self):
+		return self._informationSource
+
+	@informationSource.setter
+	def informationSource(self, value):
+		self._informationSource = value
+
+	@property
+	def objectModelSyncronized(self):
+		return self._objectModelSyncronized
+
+	@objectModelSyncronized.setter
+	def objectModelSyncronized(self, value):
+		self._objectModelSyncronized = value
+	
+	@property
+	def driveExistence(self):
+		return self._driveExistence
+
+	@driveExistence.setter
+	def driveExistence(self, value):
+		self._driveExistence = value
+
+	@property
 	def currentUser(self):
 		return self._currentUser
 
@@ -98,7 +124,6 @@ class Application:
 	@isNewUser.setter
 	def isNewUser(self, value):
 		self._isNewUser = value
-
 	
 	@property
 	def databaseOperator(self):
@@ -114,7 +139,7 @@ class Application:
 
 	@property
 	def outputManager(self):
-		return self._outputManager	
+		return self._outputManager
 
 	'''
 	initializeApplication()
@@ -127,13 +152,13 @@ class Application:
 		self.outputManager.broadcast("Initializing application.")
 
 		#Database Connectivity Check
-		db_check = self.databaseOperator.checkConnection()
+		databaseConnectionCheck = self.databaseOperator.checkConnection()
 
 		#Config File Existence and Verification
-		cfg_check = self.configurationManager.checkAllConfiguration()
+		configurationFilesCheck = self.configurationManager.checkAllConfiguration()
 
 		#Info Source Determination Check
-		self.determineInfoSource(db_check, cfg_check)
+		self.informationSource = self.determineInfoSource(databaseConnectionCheck, configurationFilesCheck)
 
 		#Config File Congruency Check
 		self.configurationManager.configFileSyncronized = self.sourceCongruencyCheck()
@@ -142,12 +167,13 @@ class Application:
 		self.driveExistence = self.driveExistenceCheck()
 
 		#Object Model Construction
+		self.objectModel.buildObjectModel(self._informationSource)
 
-		
 		#Object Model Congruency Check
+		self.objectModelSyncronized = self.objectModelCongruencyCheck()
 
-		# Setup Configuration Screen and Display Frame needed
-
+		#Setup Run Configuration
+		self.configurationManager.setUpRunConfiguration(self.objectModel.currentUser)
 
 
 	'''
@@ -157,16 +183,18 @@ class Application:
 	'''
 	def determineInfoSource(self, db_check, cfg_check):
 		self.outputManager.broadcast("Determining Information Source . . .")
+		infoSource = ""
 		if db_check == False and cfg_check == False:
-			self._informationSource = source.NO_SOURCE
+			infoSource = source.NO_SOURCE
 		elif db_check == True and cfg_check == False:
-			self._informationSource = source.SOURCE_DATABASE_NO_CFG
+			infoSource = source.SOURCE_DATABASE_NO_CFG
 		elif db_check == False and cfg_check == True:
-			self._informationSource = source.SOURCE_CONFIG_NO_DB
+			infoSource = source.SOURCE_CONFIG_NO_DB
 		else:
-			self._informationSource = source.SOURCE_DATABASE
+			infoSource = source.SOURCE_DATABASE
 
-		self.outputManager.broadcast(f"   Information Source: {self._informationSource.name}")
+		self.outputManager.broadcast(f"   Information Source: {infoSource.name}")
+		return infoSource
 
 	'''
 	sourceCongruencyCheck()
@@ -284,8 +312,46 @@ class Application:
 
 		return True
 
+	'''
+	objectModelCongruencyCheck()
 
+	Builds a JSON-like object from the current Object Model
 
+	If the information source is based on the database, then a JSON-like object is built from the database configuration.
+	Else, if the information source is based on the configurtion file, then a JSON-like object is built from the configuration file.
+
+	If the two generated JSON-like objects are equal then this function returns True, else False
+	'''
+	def objectModelCongruencyCheck(self):
+		self.outputManager.broadcast("Running Object Model Congruency Check . . .")
+		OBJresult = self.configurationManager.jsonOperator.buildJSONFromObjectModel(self.objectModel.currentUser)
+		
+		try:
+			jsonObjectModel = OBJresult[self.currentUserID]
+		except Exception as e:
+			jsonObjectModel = OBJresult[str(self.currentUserID)]
+
+		if self._informationSource.name == "SOURCE_DATABASE" or self._informationSource.name == "SOURCE_DATABASE_NO_CFG":
+			DBresult = self.configurationManager.jsonOperator.buildJSONFromDatabase(self.currentUserID, self.databaseOperator)
+
+			try:
+				jsonDatabaseModel = DBresult[self.currentUserID]
+			except Exception as e:
+				jsonDatabaseModel = DBresult[str(self.currentUserID)]
+
+			if jsonObjectModel == jsonDatabaseModel:
+				self.outputManager.broadcast("   SUCCESS: Object Model matches information in the Database Model.")
+				return True
+			else:
+				self.outputManager.broadcast("   WARNING: Object Model does not match database. Generate new object model.")
+
+		elif self._informationSource.name == "NO_SOURCE":
+			self.outputManager.broadcast("   WARNING: No information source detected.")
+			return False
+		else:
+			self.outputManager.broadcast("   WARNING: Object Model does not match configuration file.")
+			self.outputManager.broadcast("     Generate new configuration file or new object model.")
+			return False
 
 
 

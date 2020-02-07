@@ -14,6 +14,7 @@ class ConfigurationManager:
 		self._runConfigurationOK = False
 		self._runConfigurationFilePresent = False
 		self._runConfigurationFileValidJSON = False
+		self._runConfigurationDict = {}
 
 		self._configPath = os.path.join(application.configDirectory, "config.cfg")
 		self._runConfigPath = os.path.join(application.configDirectory, "runcfg.cfg")
@@ -85,6 +86,15 @@ class ConfigurationManager:
 	@runConfigurationFileValidJSON.setter
 	def runConfigurationFileValidJSON(self, value):
 		self._runConfigurationFileValidJSON = value
+
+	@property
+	def runConfigurationDict(self):
+		return self._runConfigurationDict
+
+	@runConfigurationDict.setter
+	def runConfigurationDict(self, value):
+		self._runConfigurationDict = value
+	
 	
 	'''
 	checkConfiguration()
@@ -182,3 +192,17 @@ class ConfigurationManager:
 			return True
 		else:
 			return False
+
+	'''
+	initRunConfig()
+
+	Iterates through all procedures and updates the runConfigurationDict dictionary.
+	'''
+	def setUpRunConfiguration(self, userObject):
+		collectionObjects = userObject.collections
+		collectionObjectItems = [(item[0],item[1]) for item in collectionObjects.items()]
+		for collection in collectionObjectItems:
+			procedureObjects = collection[1].procedures
+			procedureObjectItems = [(item[0],item[1]) for item in procedureObjects.items()]
+			for procedure in procedureObjectItems:
+				self.runConfigurationDict[procedure[0]] = procedure[1].selectedForRunConfig

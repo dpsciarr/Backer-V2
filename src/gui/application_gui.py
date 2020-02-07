@@ -6,8 +6,6 @@ import tkinter as tk
 srcDir = os.path.dirname(__file__)
 frameDir = os.path.join(srcDir, "_frames")
 
-print(frameDir)
-
 sys.path.append(frameDir)
 
 from TreeViewFrame import TreeViewFrame
@@ -60,6 +58,7 @@ class ApplicationWindow(tk.Tk):
 		self.after(500, lambda: self.focus_force())
 
 		self.application.initializeApplication()
+		self.treeFrame.buildTreeView(self.application.objectManager.currentUser)
 
 		self.mainloop()
 
@@ -97,8 +96,14 @@ class ApplicationWindow(tk.Tk):
 		print("Run Config")
 
 	def updateConfigFile(self):
-		print("Update Config File")
+		self.application.outputManager.broadcast("Updating Configuration File . . .")
+		JSONfromDatabase = self.application.configurationManager.jsonOperator.buildJSONFromDatabase(self.application.currentUserID, self.application.databaseOperator)
+		
+		jsonFileName = os.path.join(self.application.configDirectory, "config.cfg")
+		with open(jsonFileName, 'w') as dumpFile:
+			self.application.configurationManager.jsonOperator.dump(JSONfromDatabase, dumpFile)
 
+		self.application.sourceCongruencyCheck()
 
 
 
