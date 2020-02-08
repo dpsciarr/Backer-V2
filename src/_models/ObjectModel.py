@@ -5,6 +5,35 @@ class ObjectModel:
 		self._currentUser = None
 		self._application = application
 
+		self._driveLetters = [
+			"A",
+			"B",
+			"C",
+			"D",
+			"E",
+			"F",
+			"G",
+			"H",
+			"I",
+			"J",
+			"K",
+			"L",
+			"M",
+			"N",
+			"O",
+			"P",
+			"Q",
+			"R",
+			"S",
+			"T",
+			"U",
+			"V",
+			"W",
+			"X",
+			"Y",
+			"Z"
+		]
+
 	@property
 	def currentUser(self):
 		return self._currentUser
@@ -17,6 +46,16 @@ class ObjectModel:
 	def application(self):
 		return self._application
 
+	@property
+	def driveLetters(self):
+		return self._driveLetters
+	
+
+	'''
+	buildObjectModel(infoSource)
+
+	Builds the system object model based on the current information source (high-level).
+	'''
 	def buildObjectModel(self, infoSource):
 		self.application.outputManager.broadcast("Constructing Object Model . . .")
 		self.application.outputManager.broadcast(f"   Current Information Source: {infoSource.name}")
@@ -29,6 +68,11 @@ class ObjectModel:
 			self.application.outputManager.broadcast("   WARNING: No information source available.")
 			self.application.outputManager.broadcast("     Must be connected to a database to use this application.")	
 
+	'''
+	buildDatabaseModel()
+
+	Builds the object model based on the database model.
+	'''
 	def buildDatabaseModel(self):
 		userID = self.application.currentUserID
 		userName = self.application.currentUser
@@ -119,6 +163,11 @@ class ObjectModel:
 					self.currentUser.addCollection(collectionObject)
 
 
+	'''
+	buildConfigurationModel()
+
+	Builds the object model based on the configuration file.
+	'''
 	def buildConfigurationModel(self):
 		print("Building model from configuration file...")
 		userID = self.application.currentUserID
@@ -177,12 +226,39 @@ class ObjectModel:
 
 			self.currentUser.addCollection(collectionObject)
 
+	'''
+	addCollectionToModel(collectionID, collectionName, currUserID)
 
+	Handles the addition of a new Collection to the Object Model.
+	'''
+	def addCollectionToModel(self, collectionID, collectionName, currUserID):
+		collectionObject = Collection(identifier = collectionID, collectionName = collectionName, userID = currUserID)
+		self.currentUser.addCollection(collectionObject)
 
+		return self.currentUser.getCollection(collectionID).collectionID
 
+	'''
+	addDeviceToModel(deviceID, deviceName, currUserID)
 
+	Handles the addition of a new Device to the Object Model.
+	'''
+	def addDeviceToModel(self, deviceID, deviceName, currUserID):
+		deviceObject = Device(identifier = deviceID, name = deviceName, user = currUserID)
+		self.currentUser.addDevice(deviceObject)
 
+		return self.currentUser.getDevice(deviceID).deviceID
 
+	'''
+	addDriveToModel(driveID, driveName, driveLetter, deviceID)
+
+	Handles the addition of a new Drive to the Object Model.
+	'''
+
+	def addDriveToModel(self, driveID, driveName, driveLetter, deviceID):
+		driveObject = Drive(identifier = driveID, driveName = driveName, driveLetter = driveLetter, deviceID = deviceID)
+		self.currentUser.getDevice(deviceID).addDrive(driveObject)
+
+		return self.currentUser.getDevice(deviceID).drives[driveID]
 
 
 
