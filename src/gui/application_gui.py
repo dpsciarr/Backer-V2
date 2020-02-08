@@ -58,7 +58,7 @@ class ApplicationWindow(tk.Tk):
 		self.after(500, lambda: self.focus_force())
 
 		self.application.initializeApplication()
-		self.treeFrame.buildTreeView(self.application.objectManager.currentUser)
+		self.treeFrame.buildTreeView(self.application.objectModel.currentUser)
 
 		self.mainloop()
 
