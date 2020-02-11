@@ -400,4 +400,172 @@ class BackerQueries:
 		self.operator.commit()
 		self.operator.closeDatabase()
 
-		
+	'''
+	deleteCollection(collectionID)
+
+	Deletes a collection from the collections table in database.
+	'''
+	def deleteCollection(self, collectionID):
+		table = "collections"
+		field = "collection_id"
+
+		self.operator.openDatabase()
+		sql = f"""DELETE FROM {table} WHERE {field} = '{collectionID}'"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	deleteDevice(deviceID)
+
+	Deletes a device from the devices table in database.
+	'''
+	def deleteDevice(self, deviceID):
+		table = "devices"
+		field = "device_id"
+
+		self.operator.openDatabase()
+		sql = f"""DELETE FROM {table} WHERE {field} = '{deviceID}'"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	renameDevice(old_id, new)
+
+	Renames a device from 'old' to 'new'.
+	'''
+	def renameDevice(self, old_id, new):
+		table = "devices"
+		field = "device_name"
+		where = "device_id"
+	
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET {field} = '{new}' WHERE {where} = {old_id}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	renameCollection(old_id, new)
+
+	Renames a collection from 'old' to 'new'.
+	'''
+	def renameCollection(self, old_id, new):
+		table = "collections"
+		field = "collection_name"
+		where = "collection_id"
+	
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET {field} = '{new}' WHERE {where} = {old_id}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	editDriveName(name)
+
+	Renames a drive to "name".
+	'''
+	def updateDriveName(self, newDriveName, driveID):
+		table = "drives"
+		field = "drive_name"
+		where = "drive_id"
+
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET "{field}" = '{newDriveName}' WHERE "{where}" = {driveID}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	editDriveLetter(letter)
+
+	Assigns a new letter to a drive.
+	'''
+	def updateDriveLetter(self, newLetter, driveID):
+		table = "drives"
+		field = "drive_letter"
+		where = "drive_id"
+
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET "{field}" = '{newLetter}' WHERE "{where}" = {driveID}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+	
+	'''
+	updateProcedureName(name, procID)
+
+	Updates procedure name.
+	'''
+	def updateProcedureName(self, newProcedureName, procID):
+		table = "procedures"
+		field = "procedure_name"
+		where = "procedure_id"
+
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET "{field}" = '{newProcedureName}' WHERE "{where}" = {procID}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	updateProcedureSource(src, procID)
+
+	Updates the source of procedure with ID procID.
+	'''
+	def updateProcedureSource(self, newSourcePath, procID):
+		table = "procedures"
+		field = "source_path"
+		where = "procedure_id"
+
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET "{field}" = '{newSourcePath}' WHERE "{where}" = {procID}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	updateProcedureDestination(destination, procID)
+
+	Updates the destination of procedure with ID procID.
+	'''
+	def updateProcedureDestination(self, newDestinationPath, procID):
+		table = "procedures"
+		field = "destination_path"
+		where = "procedure_id"
+
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET "{field}" = '{newDestinationPath}' WHERE "{where}" = {procID}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	'''
+	updateProcedureOpCode(opCode, procID)
+
+	Updates the op code of procedure with ID procID.
+	'''
+	def updateProcedureOpCode(self, opCode, procID):
+		table = "procedures"
+		field = "operation_id"
+		where = "procedure_id"
+
+		self.operator.openDatabase()
+		sql = f"""UPDATE {table} SET "{field}" = '{opCode}' WHERE "{where}" = {procID}"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+	

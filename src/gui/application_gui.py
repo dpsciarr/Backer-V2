@@ -5,6 +5,7 @@ import tkinter as tk
 
 srcDir = os.path.dirname(__file__)
 frameDir = os.path.join(srcDir, "_frames")
+dialogsDir = os.path.join(frameDir, "_dialogs")
 
 sys.path.append(frameDir)
 
@@ -13,6 +14,13 @@ from MainFrame import MainFrame
 from OutputFrame import OutputFrame
 
 sys.path.remove(frameDir)
+
+sys.path.append(dialogsDir)
+
+from AddCollectionDialog import AddCollectionDialog
+from AddDeviceDialog import AddDeviceDialog
+
+sys.path.remove(dialogsDir)
 
 
 ###############################################################################################################
@@ -59,23 +67,23 @@ class ApplicationWindow(tk.Tk):
 
 		self.application.initializeApplication()
 		self.treeFrame.buildTreeView(self.application.objectModel.currentUser)
+		self.mainFrame.populateTreeviews()
 
 		self.mainloop()
 
 	@property
 	def application(self):
 		return self._application
-	
-	
+
 
 	def kill(self):
 		self.winfo_toplevel().destroy()
 
 	def openNewDeviceDialog(self):
-		print("New Device...")
+		AddDeviceDialog(self.treeFrame)
 
 	def openNewCollectionDialog(self):
-		print("New Collection")
+		AddCollectionDialog(self.treeFrame)
 
 	def saveRunConfiguration(self):
 		print("Save Run Config")

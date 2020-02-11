@@ -288,7 +288,6 @@ class User:
 	@property
 	def devices(self):
 		return self._devices
-
 	
 	def addCollection(self, collection):
 		self.collections[collection.collectionID] = collection
@@ -307,7 +306,6 @@ class User:
 			return self.devices[devID]
 		else:
 			return None
-
 	
 	def removeCollection(self, collID):
 		return self.collections.pop(collID, None)
@@ -341,7 +339,10 @@ class Device:
 	@property
 	def deviceName(self):
 		return self._deviceName
-	
+
+	@deviceName.setter
+	def deviceName(self, value):
+		self._deviceName = value
 
 	@property
 	def deviceUser(self):
@@ -399,6 +400,10 @@ class Drive:
 	@property
 	def driveName(self):
 		return self._driveName
+
+	@driveName.setter
+	def driveName(self, value):
+		self._driveName = value
 	
 	@property
 	def driveID(self):
@@ -449,6 +454,10 @@ class Collection:
 	@property
 	def collectionName(self):
 		return self._collectionName
+
+	@collectionName.setter
+	def collectionName(self, value):
+		self._collectionName = value
 
 	@property
 	def operationID(self):
@@ -530,6 +539,10 @@ class Procedure:
 	@property
 	def procedureName(self):
 		return self._procedureName
+
+	@procedureName.setter
+	def procedureName(self, value):
+		self._procedureName = value
 	
 	@property
 	def sourcePath(self):

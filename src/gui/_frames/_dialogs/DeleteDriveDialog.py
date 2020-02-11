@@ -58,6 +58,7 @@ class DeleteDriveDialog(tk.Tk):
 		self.closeButton.place(x=230, y=90, relx=0, rely=0, anchor='nw')
 
 		f.pack(fill='both', expand=1)
+		self.after(500, lambda: self.focus_force())
 
 	@property
 	def application(self):
