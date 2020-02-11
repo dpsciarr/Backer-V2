@@ -98,12 +98,13 @@ class AddDriveDialog(tk.Tk):
 			else:
 				#Add drive to database
 				driveID = self.application.databaseOperator.queries.addDrive(newDriveName, newDriveLetter, newDeviceID)
-
+				
 				if driveID is not None:
 					self.application.outputManager.broadcast(f"   Drive '{newDriveName}' added to database.")
 
 					#Add drive to object model
 					driveID = self.application.objectModel.addDriveToModel(driveID, newDriveName, newDriveLetter, newDeviceID)
+
 					if driveID is not None:
 						self.application.outputManager.broadcast(f"   Drive '{newDriveName}' added to object model.")
 

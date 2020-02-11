@@ -234,7 +234,7 @@ class ObjectModel:
 		driveObject = Drive(identifier = driveID, driveName = driveName, driveLetter = driveLetter, deviceID = deviceID)
 		self.currentUser.getDevice(deviceID).addDrive(driveObject)
 
-		return self.currentUser.getDevice(deviceID).drives[driveID]
+		return self.currentUser.getDevice(deviceID).drives[driveID].driveID
 
 	'''
 	addProcedureToModel(procedureID, newProcedureName, newProcedureSource, newProcedureDest, collectionID, procOpCodeID)
@@ -246,7 +246,7 @@ class ObjectModel:
 		procedureObject = Procedure(identifier = procedureID, procName = newProcedureName, source = newProcedureSource, destination = newProcedureDest, collectionID = collectionID, operationID = procOpCodeID)
 		self.currentUser.getCollection(collectionID).addProcedure(procedureObject)
 
-		return self.currentUser.getCollection(collectionID).procedures[procedureID]
+		return self.currentUser.getCollection(collectionID).procedures[procedureID].procedureID
 
 	
 

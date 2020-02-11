@@ -366,3 +366,38 @@ class BackerQueries:
 		self.operator.closeDatabase()
 
 		return procedureID
+
+	'''
+	deleteProcedure(procedureID)
+
+	Deletes a procedure from the procedures table in database.
+	'''
+	def deleteProcedure(self, procID):
+		table = "procedures"
+		field = "procedure_id"
+
+		self.operator.openDatabase()
+		sql = f"""DELETE FROM {table} WHERE {field} = '{procID}'"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+		
+	'''
+	deleteDrive(driveID)
+
+	Deletes a drive from the drives table in database.
+	'''
+	def deleteDrive(self, driveID):
+		table = "drives"
+		field = "drive_id"
+
+		self.operator.openDatabase()
+		sql = f"""DELETE FROM {table} WHERE {field} = '{driveID}'"""
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+		
