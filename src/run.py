@@ -19,6 +19,7 @@ from DatabaseOperator import DatabaseOperator
 from ConfigurationManager import ConfigurationManager
 from ObjectModel import ObjectModel
 from OutputFrame import OutputFrame as broadcaster
+from ObjectModel import Operation
 
 sys.path.remove(outputDir)
 sys.path.remove(modelDir)
@@ -42,6 +43,7 @@ class Application:
 		self._informationSource = source.NO_SOURCE
 		self._objectModelSyncronized = False
 		self._driveExistence = False
+		self._operationObject = Operation(self)
 
 		self._srcDirectory = os.path.dirname(os.path.abspath(__file__))
 		self._applicationDirectory = os.path.dirname(self._srcDirectory)
@@ -140,6 +142,11 @@ class Application:
 	@property
 	def outputManager(self):
 		return self._outputManager
+
+	@property
+	def operationObject(self):
+		return self._operationObject
+	
 
 	'''
 	initializeApplication()

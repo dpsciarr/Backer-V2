@@ -319,3 +319,50 @@ class BackerQueries:
 
 		return driveID
 
+	'''
+	checkDatabaseForProcedure(procName, collectionName)
+
+	Checks if the procedure exists in the database for collection 'collectionName'
+	'''
+	def checkDatabaseForProcedure(self, procName, collectionID):
+		table = "procedures"
+		select = "procedure_name"
+		where = "collection_id"
+
+		self.operator.openDatabase()
+		sql = f"SELECT {select} FROM {table} WHERE {where} = '{collectionID}'"
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		headers = [x[0] for x in self.operator.cursor.description]
+		data = self.operator.fetchall()
+		self.operator.closeDatabase()
+
+		procExists = False
+		if len(data) != 0:
+			for each in data:
+				if each[0] == procName:
+					procExists = True
+
+		return procExists
+
+	'''
+	addProcedure(procedureName, sourcePath, destinationPath, collectionID, operationID)
+
+	Add a new procedure to the next available ID in the database.
+	'''
+	def addProcedure(self, procedureName, sourcePath, destinationPath, collectionID, operationID):
+		table = "procedures"
+
+		#Find the next available collection ID
+		procedureID = self.operator.toolset.nextAvailableID("procedures")
+
+		#Add Collection to database
+		self.operator.openDatabase()
+		sql = f"INSERT INTO procedures(procedure_id, procedure_name, source_path, destination_path, collection_id, operation_id) \
+		VALUES ({procedureID}, '{procedureName}', '{sourcePath}', '{destinationPath}', {collectionID}, {operationID})"
+		self.operator.setCursor()
+		self.operator.execute(sql)
+		self.operator.commit()
+		self.operator.closeDatabase()
+
+		return procedureID

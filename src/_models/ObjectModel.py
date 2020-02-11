@@ -5,34 +5,10 @@ class ObjectModel:
 		self._currentUser = None
 		self._application = application
 
-		self._driveLetters = [
-			"A",
-			"B",
-			"C",
-			"D",
-			"E",
-			"F",
-			"G",
-			"H",
-			"I",
-			"J",
-			"K",
-			"L",
-			"M",
-			"N",
-			"O",
-			"P",
-			"Q",
-			"R",
-			"S",
-			"T",
-			"U",
-			"V",
-			"W",
-			"X",
-			"Y",
-			"Z"
-		]
+		self._driveLetters = ["A", "B", "C", "D", \
+			"E", "F", "G", "H", "I", "J", "K", "L", \
+			"M", "N", "O", "P", "Q", "R", "S", "T", \
+			"U", "V", "W", "X", "Y", "Z"]
 
 	@property
 	def currentUser(self):
@@ -260,6 +236,19 @@ class ObjectModel:
 
 		return self.currentUser.getDevice(deviceID).drives[driveID]
 
+	'''
+	addProcedureToModel(procedureID, newProcedureName, newProcedureSource, newProcedureDest, collectionID, procOpCodeID)
+
+	Handles the addition of a new Procedure to the Object Model.
+	'''
+
+	def addProcedureToModel(self, procedureID, newProcedureName, newProcedureSource, newProcedureDest, collectionID, procOpCodeID):
+		procedureObject = Procedure(identifier = procedureID, procName = newProcedureName, source = newProcedureSource, destination = newProcedureDest, collectionID = collectionID, operationID = procOpCodeID)
+		self.currentUser.getCollection(collectionID).addProcedure(procedureObject)
+
+		return self.currentUser.getCollection(collectionID).procedures[procedureID]
+
+	
 
 
 
@@ -586,5 +575,82 @@ class Procedure:
 	def selectedForRunConfig(self):
 		return self._selectedForRunConfig
 	
+
+	
+
+
+
+
+class Operation:
+	def __init__(self, application):
+		self._application = application
+		self._operations = {
+			"File Copy New" : 0,
+			"Single File Copy New" : 1,
+			"File Copy Overwrite" : 2,
+			"Single File Copy Overwrite" : 3,
+			"File Migrate New" : 4,
+			"Single File Migrate New" : 5,
+			"File Migrate Overwrite" : 6,
+			"Single File Migrate Overwrite" : 7,
+			"Folder Copy New" : 8,
+			"Single Folder Copy New" : 9,
+			"Folder Copy Overwrite" : 10,
+			"Single Folder Copy Overwrite" : 11,
+			"Directory Sync Overwrite" : 12,
+			"Full Directory Sync" : 13,
+			"File Copy New (Date)" : 14,
+			"File Copy New (Date-Time)" : 15,
+			"File Copy New (Time-Stamp)" : 16,
+			"Single File Copy New (Date)" : 17,
+			"Single File Copy New (Date-Time)" : 18,
+			"Single File Copy New (Time-Stamp)" : 19,
+			"Single File Copy New (Revision)" : 20,
+			"File Migrate New (Date)" : 21,
+			"File Migrate New (Date-Time)" : 22,
+			"File Migrate New (Time-Stamp)" : 23,
+			"Single File Migrate New (Date)" : 24,
+			"Single File Migrate New (Date-Time)" : 25,
+			"Single File Migrate New (Time-Stamp)" : 26,
+			"Single File Migrate New (Revision)" : 27,
+			"Folder Copy New (Date)" : 28,
+			"Folder Copy New (Date-Time)" : 29,
+			"Folder Copy New (Time-Stamp)" : 30,
+			"Single Folder Copy New (Date)" : 31,
+			"Single Folder Copy New (Date-Time)" : 32,
+			"Single Folder Copy New (Time-Stamp)" : 33
+		}
+
+		self._operationsNumToString = {v: k for k, v in self._operations.items()}
+
+	@property
+	def application(self):
+		return self._application
+	
+	@property
+	def operations(self):
+		return self._operations
+
+	@property
+	def operationsNumToString(self):
+		return self._operationsNumToString
+	
+
+	'''
+	getOperationByNum(number)
+
+	Retrieves an operation name by number.
+	'''
+	def getOperationByNum(self, number):
+		return self._operationsNumToString[number]
+
+	'''
+	getOperationByString(string)
+
+	Retrieves an operation number by name.
+	'''
+	def getOperationByString(self, string):
+		return self.operations[string]
+
 
 	
