@@ -37,7 +37,7 @@ class MainFrame(tk.Frame):
 		self.runConfigToIdleBtn = ttk.Button(self, text=">", width = 1, command= lambda : self.configToIdle())
 		self.idleToRunCfgBtn = ttk.Button(self, text="<", width = 1, command= lambda : self.idleToConfig())
 
-		#self.runBackupConfigBtn = ttk.Button(self, text="RUN CONFIGURATION", width = 25, command = lambda : self.runBackupConfiguration())
+		self.runBackupConfigBtn = ttk.Button(self, text="RUN CONFIGURATION", width = 25, command = lambda : self.runBackupConfiguration())
 
 		self.idleConfigTree = ttk.Treeview(self, selectmode='browse', columns=['#1','#2'])
 		self.idleConfigTree.bind('<<TreeviewSelect>>', self.idleTreeSelectionListener)
@@ -65,6 +65,8 @@ class MainFrame(tk.Frame):
 		self.destDisplayLabel.place(x=125, y = 310, anchor='nw')
 
 		self.runConfigTree.place(x=255, y=35, anchor='nw')
+
+		self.runBackupConfigBtn.place(x=50, y=50, anchor='nw')
 
 		self.runConfigToIdleBtn.place(x = 585, y = 120, anchor='nw')
 		self.idleToRunCfgBtn.place(x = 585, y = 155, anchor='nw')
@@ -216,3 +218,6 @@ class MainFrame(tk.Frame):
 							selectedItemDict = self.idleConfigTree.item(self._currentTreeItemID)
 							self.runConfigTree.insert("", "end", iid=f"{self._currentTreeItemID}", text=selectedItemDict['text'], values=selectedItemDict['values'])
 							self.idleConfigTree.delete(self._currentTreeItemID)
+
+	def runBackupConfiguration(self):
+		print("Running Backup")

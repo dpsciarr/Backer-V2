@@ -19,6 +19,8 @@ sys.path.append(dialogsDir)
 
 from AddCollectionDialog import AddCollectionDialog
 from AddDeviceDialog import AddDeviceDialog
+from SaveConfigurationDialog import SaveConfigurationDialog
+from LoadConfigurationDialog import LoadConfigurationDialog
 
 sys.path.remove(dialogsDir)
 
@@ -88,12 +90,6 @@ class ApplicationWindow(tk.Tk):
 	def openNewCollectionDialog(self):
 		AddCollectionDialog(self.treeFrame)
 
-	def saveRunConfiguration(self):
-		print("Save Run Config")
-
-	def loadRunConfiguration(self):
-		print("Load Run Config")
-
 	def exitApplication(self):
 		self.kill()
 
@@ -116,7 +112,23 @@ class ApplicationWindow(tk.Tk):
 
 		self.application.sourceCongruencyCheck()
 
+	'''
+	saveRunConfiguration
 
+	Saves the run configuration for user CurrentUser.
+	'''
+	def saveRunConfiguration(self):
+		saveDialog = SaveConfigurationDialog(self)
+		saveDialog.mainloop()
+
+	'''
+	loadRunConfiguration
+
+	Loads a configuration for user CurrentUser
+	'''
+	def loadRunConfiguration(self):
+		loadDialog = LoadConfigurationDialog(self)
+		loadDialog.mainloop()
 
 
 
