@@ -206,3 +206,11 @@ class ConfigurationManager:
 			procedureObjectItems = [(item[0],item[1]) for item in procedureObjects.items()]
 			for procedure in procedureObjectItems:
 				self.runConfigurationDict[procedure[0]] = procedure[1].selectedForRunConfig
+
+	'''
+	updateRunConfig(procID, runCfgStatus)
+	
+	Updates a single procedure, identified by procID, in the run configuration dict with runCfgStatus
+	'''
+	def updateRunConfig(self, procID, runCfgStatus):
+		self.runConfigurationDict[procID] = runCfgStatus

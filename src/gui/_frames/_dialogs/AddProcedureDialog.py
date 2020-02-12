@@ -160,6 +160,8 @@ class AddProcedureDialog(tk.Tk):
 					if procID is not None:
 						self.application.outputManager.broadcast(f"   Procedure {newProcedureName} has been added to the object model.")
 
+						self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.insert("", "end", iid= f"proc{procID}", values = [f"{collectionName}", f"{newProcedureName}"])
+
 						#Add Procedure to TreeView
 						self._treeViewFrame.tree.insert(self.iidFromTree, "end", iid=f"proc{procedureID}", text=f"{newProcedureName}")
 		elif infoSrc == "SOURCE_CONFIG_NO_DB":

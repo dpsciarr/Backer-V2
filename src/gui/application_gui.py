@@ -74,6 +74,9 @@ class ApplicationWindow(tk.Tk):
 	@property
 	def application(self):
 		return self._application
+	
+
+
 
 
 	def kill(self):

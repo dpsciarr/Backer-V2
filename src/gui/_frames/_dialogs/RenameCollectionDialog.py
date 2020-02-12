@@ -67,6 +67,7 @@ class RenameCollectionDialog(tk.Tk):
 		currentUser = self.application.currentUser
 		currentUserID = self.application.currentUserID
 
+
 		if infoSrc == "SOURCE_DATABASE" or infoSrc == "SOURCE_DATABASE_NO_CFG":
 			#Notify user of renaming request
 			self.application.outputManager.broadcast(f"Attempting to rename {self.selectedCollectionName} to {newCollectionName}")
@@ -86,6 +87,20 @@ class RenameCollectionDialog(tk.Tk):
 			#Rename the device in the tree
 			self._treeViewFrame.tree.item(self.iidFromTree, text = newCollectionName)
 
+			mainFrame = self._treeViewFrame.mainWindow.mainFrame
+			collObj = self.application.objectModel.currentUser.getCollection(collectionID)
+			procObjs = collObj.procedures
+			procObjItems = [(item[0], item[1]) for item in procObjs.items()]
+
+			for eachProcObj in procObjItems:
+				procName = eachProcObj.procedureName
+				procID = eachProcObj.procedureID
+				procStr = "proc" + str(procID)
+
+				if mainFrame.idleConfigTree.exists(procStr):
+					mainFrame.idleConfigTree.item(procStr, values=[newCollectionName, procName])
+				elif mainFrame.runConfigTree.exists(procStr):
+					mainFrame.runConfigTree.item(procStr, value=[newCollectionName, procName])
 			self.winfo_toplevel().destroy()
 
 	def kill(self):

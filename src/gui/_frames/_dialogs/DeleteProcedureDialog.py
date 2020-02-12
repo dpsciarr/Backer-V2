@@ -86,12 +86,24 @@ class DeleteProcedureDialog(tk.Tk):
 				result = self.collectionObject.getProcedure(procID)
 			except KeyError:
 				self.application.outputManager.broadcast(f"   Procedure {self.selectedProcName} deleted from Object Model.")
+				
+				if self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.exists(self.procedureIIDfromTree):
+					self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.delete(self.procedureIIDfromTree)
+				elif self._treeViewFrame.mainWindow.mainFrame.runConfigTree.exists(self.procedureIIDfromTree):
+					self._treeViewFrame.mainWindow.mainFrame.runConfigTree.delete(self.procedureIIDfromTree)
+					
+
 				self._treeViewFrame.tree.delete(self.procedureIIDfromTree)
 
 			if result == None:
 				self.application.outputManager.broadcast(f"   Procedure {self.selectedProcName} deleted from Object Model.")
 				self._treeViewFrame.tree.delete(self.procedureIIDfromTree)
 
+				if self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.exists(self.procedureIIDfromTree):
+					self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.delete(self.procedureIIDfromTree)
+				elif self._treeViewFrame.mainWindow.mainFrame.runConfigTree.exists(self.procedureIIDfromTree):
+					self._treeViewFrame.mainWindow.mainFrame.runConfigTree.delete(self.procedureIIDfromTree)
+					
 			self.winfo_toplevel().destroy()
 
 	def kill(self):

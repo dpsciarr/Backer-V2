@@ -171,6 +171,12 @@ class EditProcedureDialog(tk.Tk):
 				#Update Tree
 				self._treeViewFrame.tree.item(self.procedureIIDfromTree, text = procNameToSave)
 
+				if self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.exists(self.procedureIIDfromTree):
+					self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.item(self.procedureIIDfromTree, values = [self.collectionObject.collectionName, procNameToSave])
+				elif self._treeViewFrame.mainWindow.mainFrame.runConfigTree.exists(self.procedureIIDfromTree):
+					self._treeViewFrame.mainWindow.mainFrame.runConfigTree.item(self.procedureIIDfromTree, values= [self.collectionObject.collectionName, procNameToSave])
+					
+
 			if procSrcChanged:
 				#Update src in database
 				self.application.databaseOperator.queries.updateProcedureSource(procSrcToSave, procedureID)

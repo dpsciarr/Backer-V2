@@ -81,6 +81,9 @@ class MainFrame(tk.Frame):
 	@property
 	def mainWindow(self):
 		return self._mainWindow
+	
+	
+
 
 	def setupDiagnostics(self):
 		infoSrc = self.application.informationSource.name
@@ -172,6 +175,7 @@ class MainFrame(tk.Frame):
 			if digits != "":
 				collectionObjects = self.application.objectModel.currentUser.collections
 				collectionObjectItems = [(item[0], item[1]) for item in collectionObjects.items()]
+			
 				for collection in collectionObjectItems:
 					collectionID = collection[1].collectionID
 					procedureObjects = collection[1].procedures
@@ -181,8 +185,8 @@ class MainFrame(tk.Frame):
 						procID = procedure[0]
 						procObj = procedure[1]
 						if procID == int(digits):
-							#DESELECT PROCEDURE FROM RUN CONFIGURATION
-
+							procObj.deselectForRunConfig()
+							self.application.configurationManager.updateRunConfig(procID, False)
 							selectedItemDict = self.runConfigTree.item(self._currentTreeItemID)
 							self.idleConfigTree.insert("", "end", iid=f"{self._currentTreeItemID}", text=selectedItemDict['text'], values=selectedItemDict['values'])
 							self.runConfigTree.delete(self._currentTreeItemID)
@@ -207,8 +211,8 @@ class MainFrame(tk.Frame):
 						procID = procedure[0]
 						procObj = procedure[1]
 						if procID == int(digits):
-							#SELECT PROCEDURE into RUN CONFIGURATION
-
+							procObj.selectForRunConfig()
+							self.application.configurationManager.updateRunConfig(procID, True)
 							selectedItemDict = self.idleConfigTree.item(self._currentTreeItemID)
 							self.runConfigTree.insert("", "end", iid=f"{self._currentTreeItemID}", text=selectedItemDict['text'], values=selectedItemDict['values'])
 							self.idleConfigTree.delete(self._currentTreeItemID)

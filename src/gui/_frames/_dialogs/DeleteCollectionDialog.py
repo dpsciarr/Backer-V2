@@ -76,11 +76,23 @@ class DeleteCollectionDialog(tk.Tk):
 			#Remove collection from object model
 			self._currentUserObject.removeCollection(collectionID)
 			result = ""
+			mainFrame = self._treeViewFrame.mainWindow.mainFrame
 			try:
 				result = self._currentUserObject.getCollection(collectionID)
 			except KeyError:
 				self.application.outputManager.broadcast(f"   Collection {self.selectedCollectionName} deleted from Object Model.")
 				self._treeViewFrame.tree.delete(self.iidFromTree)
+
+				for eachProcObject in procedureObjectItems:
+					procName = eachProcObject[1].procedureName
+					procID = eachProcObject[1].procedureID
+					procStr = "proc" + str(procID)
+
+					if mainFrame.idleConfigTree.exists(procStr):
+						mainFrame.idleConfigTree.delete(procStr)
+					elif mainFrame.runConfigTree.exists(procStr):
+						mainFrame.runConfigTree.delete(procStr)
+
 
 			if result == None:
 				self.application.outputManager.broadcast(f"   Collection {self.selectedCollectionName} deleted from Object Model.")
