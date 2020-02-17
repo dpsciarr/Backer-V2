@@ -15,6 +15,8 @@ Select a source folder and a destination folder. The files in the source folder 
 If the file already exists the file is still copied, but with a suffix determined by the "Suffix" setting:
 1. Basic:
    - Appends a numeric to the end of the newly copied file(s).
+   - Example
+     - Hello 
 2. Date:
    - Appends the date to the end of the newly copied file(s).
 3. Date-Time:
