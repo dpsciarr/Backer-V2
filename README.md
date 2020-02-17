@@ -12,17 +12,31 @@ V2 for Backer Application
 
 Select a source folder and a destination folder. The files in the source folder are copied to the destination folder. This is not recursive, meaning the files within the child source folders are not copied, only the files directly in the source folder are copied.
 
-If the file already exists the file is still copied, but with a suffix determined by the "Suffix" setting. See appendix A.
+If the file already exists then the file is still copied, but with a suffix determined by the "Suffix" setting. See appendix A.
 
 ### Single File Copy New:
 
 Select a source file and a destination folder. The selected source file will be copied into the destination folder. If the filename exists in the destination folder then the file is still copied, but with an appended suffix detailed in Appendix A.
 
+### File Copy Overwrite:
 
+Select a source folder and a destination folder. The files in the source folder are copied to the destination folder. This is not recursive, meaning the files within the child source folders are not copied, only the files directly in the source folder are copied.
 
+If the file already exists in the destination folder then the file overwrites the existing file.
 
+### Single File Copy Overwrite:
 
+Select a source file and a destination folder. The selected source file will be copied into the destination folder. If the filename exists in the destination folder then the file overwrites the existing file.
 
+### File Migrate New:
+
+Select a source folder and a destination folder. The files in the source folder are CUT and COPIED (migrated) into the destination folder. This is not recursive, meaning the files within the child source folders are migrated, only the files directly in the source folder are migrated.
+
+If the file already exists in the destination folder then the file is migrated with a suffix determined by "Suffix". See appendix A for details.
+
+### Single File Migrate New:
+
+Select a source file and a destination folder. The source file is CUT and COPIED (migrated) into the destination folder. If the filename already exists in the destination folder then the file is migrated with a suffix determined by "suffix". See appendix A for details.
 
 
 
