@@ -1,5 +1,5 @@
 # Backer-V2
-V2 for Backer Application
+Backup Management Configuration Software
 
 ### Updates from V1:
 - Database migration from MySQL to SQLite
@@ -46,7 +46,46 @@ Select a source folder and a destination folder. The files in the source folder 
 
 Select a source file and a destination folder. The source file is CUT and COPIED (migrated) into the destination folder. If the filename exists in the destination directory, then the source file overwrites the destination file and the source file is deleted.
 
+### Folder Copy New
 
+Select a source folder and a destination folder. Only the sub-folders in the source folder are copied into the destination folder. Note that all the contents within the source subfolders are also copied over.
+
+If the foldername already exists in the destination folder then the folder is copied with a suffix determined by "Suffix". See appendix A for details.
+
+### Single Folder Copy New
+
+Select a source folder and a destination folder. The source folder and all its' contents are directly copied into the destination folder. If the foldername already exists in the destination folder then the folder is copied with a suffix determined by "Suffix". See appendix A.
+
+Example:
+Source = C://sourceFolder
+Destination = C://destinationFolder
+Result = C://destinationFolder/sourceFolder
+
+### Folder Copy Overwrite
+
+Select a source folder and a destination folder. Only the sub-folders in the source folder are copied into the destination folder. Note that all the contents within the source subfolders are also copied over.
+
+If the foldername already exists in the destination folder then the folder is overwritten if their contents differ. Otherwise, if the folders are the same no overwriting is performed.
+
+### Single Folder Copy Overwrite
+
+Select a source folder and a destination folder. The source folder and all its' contents are directly copied into the destination folder. If the foldername already exists in the destination folder then the folder is overwritten.
+
+### Directory Sync Overwrite
+
+Select a source directory and a destination directory. All contents in the source directory are copied into the destination directory, including files and folders.
+
+If a filename exists in the destination directory and the contents differ, then the file is overwritten. If a foldername exists in the destination directory and the contents differ, then the folder is overwritten.
+
+Existing files and folders in the destination directory that are not in the source directory are maintained/not touched.
+
+### Full Directory Sync
+
+Select a source directory and a destination directory. All contents in the source directory are copied into the destination directory, including files and folders.
+
+If a filename exists in the destination directory and the contents differ, then the file is overwritten. If a foldername exists in the destination directory and the contents differ, then the folder is overwritten.
+
+WARNING: Any existing files/folders in the destination directory that are not in the source directory are DELETED.
 
 
 
