@@ -32,11 +32,19 @@ Select a source file and a destination folder. The selected source file will be 
 
 Select a source folder and a destination folder. The files in the source folder are CUT and COPIED (migrated) into the destination folder. This is not recursive, meaning the files within the child source folders are migrated, only the files directly in the source folder are migrated.
 
-If the file already exists in the destination folder then the file is migrated with a suffix determined by "Suffix". See appendix A for details.
+If the filename already exists in the destination folder then the file is migrated with a suffix determined by "Suffix". See appendix A for details.
 
 ### Single File Migrate New:
 
 Select a source file and a destination folder. The source file is CUT and COPIED (migrated) into the destination folder. If the filename already exists in the destination folder then the file is migrated with a suffix determined by "suffix". See appendix A for details.
+
+### File Migrate Overwrite:
+
+Select a source folder and a destination folder. The files in the source folder are migrated into the destination folder. If the filename exists in the destination directory, then the source file is migrated IF AND ONLY IF the files differ in content. If the files have the same content, the file is not migrated.
+
+### Single File Migrate Overwrite:
+
+Select a source file and a destination folder. The source file is CUT and COPIED (migrated) into the destination folder. If the filename exists in the destination directory, then the source file overwrites the destination file and the source file is deleted.
 
 
 
