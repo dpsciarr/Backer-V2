@@ -1,5 +1,5 @@
 # Backer-V2
-Backup Management Configuration Software
+Backup Management Configuration Software (Windows Only)
 
 ### Updates from V1:
 - Database migration from MySQL to SQLite
