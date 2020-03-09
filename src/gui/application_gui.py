@@ -1,3 +1,23 @@
+'''
+Backer Backup Management Software provides the ability to customize and streamline your backup process.
+
+Copyright (C) 2020 Dominic P. Sciarrino
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTIBILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see the source code at GitHub for
+COPYING.txt file or contact the author at dominic.sciarrino@gmail.com.
+'''
+
 from tkinter import ttk
 import sys
 import os.path
@@ -152,7 +172,7 @@ class MainMenuBar(tk.Menu):
 		self.fileMenu.add_command(label="Exit", command=applicationWindow.exitApplication)
 
 		self.toolMenu = tk.Menu(self.menubar, tearoff=0)
-		self.toolMenu.add_command(label="Run Backup...", command=applicationWindow.runConfiguration)
+		self.toolMenu.add_command(label="Run Backup", command=applicationWindow.runConfiguration)
 		self.toolMenu.add_separator()
 		self.toolMenu.add_command(label="Update Configuration File", command=applicationWindow.updateConfigFile)
 
