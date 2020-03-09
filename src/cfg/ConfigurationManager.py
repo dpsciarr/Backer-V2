@@ -1,10 +1,12 @@
 import os.path
 from JsonOperator import JsonOperator as jsonOperator
+from ConfigurationRunner import ConfigurationRunner
 
 class ConfigurationManager:
 	def __init__(self, application):
 		self._application = application
 		self._jsonOperator = jsonOperator(self)
+		self._configurationRunner = None
 
 		self._configurationOK = False
 		self._configurationFilePresent = False
@@ -37,7 +39,14 @@ class ConfigurationManager:
 	@property
 	def runConfigPath(self):
 		return self._runConfigPath
-	
+
+	@property
+	def configurationRunner(self):
+		return self._configurationRunner
+
+	@configurationRunner.setter
+	def configurationRunner(self, value):
+		self._configurationRunner = value
 
 	@property
 	def configurationOK(self):
@@ -94,7 +103,6 @@ class ConfigurationManager:
 	@runConfigurationDict.setter
 	def runConfigurationDict(self, value):
 		self._runConfigurationDict = value
-	
 	
 	'''
 	checkConfiguration()

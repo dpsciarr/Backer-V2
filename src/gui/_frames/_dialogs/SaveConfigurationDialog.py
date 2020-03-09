@@ -1,12 +1,17 @@
 import tkinter as tk
+import os
+import sys
+
 
 class SaveConfigurationDialog(tk.Tk):
 	def __init__(self, applicationWindow):
 		self._applicationWindow = applicationWindow
+		self._json = self.applicationWindow.application.configurationManager.jsonOperator
+
 
 		tk.Tk.__init__(self)
-		self.winfo_toplevel().title("Save Run Configuration")
-		self.winfo_toplevel().geometry("300x200+300+100")
+		self.winfo_toplevel().title("Save Configuration")
+		self.winfo_toplevel().geometry("300x175+300+100")
 		f = tk.Frame(self, bg='white')
 
 		saveFileNameLabel = tk.Label(f, text="Choose a name for your Run Configuration:", bg="white", fg="black")
@@ -21,6 +26,8 @@ class SaveConfigurationDialog(tk.Tk):
 
 		f.pack(fill='both', expand=1)
 
+		self.after(500, lambda: self.focus_force())
+
 	@property
 	def applicationWindow(self):
 		return self._applicationWindow
@@ -28,6 +35,41 @@ class SaveConfigurationDialog(tk.Tk):
 	def kill(self):
 		self.winfo_toplevel().destroy()
 
-
 	def save(self):
-		print("Saving")
+		self.applicationWindow.application.outputManager.broadcast("Saving Run Configuration . . .")
+		saveFileName = self.saveFileEntry.get()
+
+		if saveFileName != "":
+			runConfigDict = self.applicationWindow.application.configurationManager.runConfigurationDict
+
+			runConfigFolder = os.path.join(self.applicationWindow.application.configDirectory, "runcfgs")
+			runConfigFile = os.path.join(runConfigFolder, saveFileName + ".rcf")
+
+			try:
+				if os.path.exists(runConfigFile) == False:
+					fileOpen = open(runConfigFile, 'w+')
+					fileOpen.close()
+				else:
+					self.applicationWindow.application.outputManager.broadcast(f"   File {saveFileName} already exists in path.")
+			
+
+			except Exception as e:
+				print(e)
+
+			if os.path.exists(runConfigFile):
+				if os.path.isfile(runConfigFile):
+					with open(runConfigFile, 'w') as fp:
+						self._json.dump(runConfigDict, fp)
+				else:
+					self.applicationWindow.application.outputManager.broadcast(f"   {runConfigFile} is not a file...")
+			else:
+				self.applicationWindow.application.outputManager.broadcast("   File not detected...")
+
+			self.applicationWindow.application.outputManager.broadcast("   Run Configuration saved as:")
+			self.applicationWindow.application.outputManager.broadcast(f"   {runConfigFile}")
+
+			self.winfo_toplevel().destroy()
+		else:
+			self.applicationWindow.application.outputManager.broadcast(f"   Please specify a name for the configuration file...")
+
+			

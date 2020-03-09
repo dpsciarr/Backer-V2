@@ -57,6 +57,7 @@ def fileCopyNew(srcDir, destDir, token = 'BASIC'):
 			returnListSrc.append(srcOnlyFiles[i])
 
 			splitDestDict = bats.splitFilePath(newDestFiles[i])
+
 			if token == 'TIME-STAMP':
 				today = datetime.now()
 				dateTime = today.strftime("%Y-%m-%d %Hh%Mm%Ss")
@@ -495,16 +496,11 @@ def fileMigrateOverwrite(srcDir, destDir):
 
 	if srcOK and destOK:
 		srcFilesList, destFilesList, err = fileCopyOverwrite(srcDir, destDir)
-		
-		print(srcFilesList)
-		print(destFilesList)
 
 		for i in range(0, len(srcFilesList)):
 			if op.getsize(srcFilesList[i]) == op.getsize(destFilesList[i]):
 				if bats.compareFiles(srcFilesList[i], destFilesList[i]):
 					bats.deleteFile(srcFilesList[i])
-				else:
-					print("Source file not deleted...")
 			else:
 				print("Source file not deleted...")
 
@@ -690,7 +686,7 @@ def folderCopyNew(srcDir, destDir, token='BASIC'):
 				j = 0
 				while bats.isFolder(newFolderName) == True:
 					j = j + 1
-					newFolderName = op.join(splitDestDict["root"], splitSrcDict["name"] + str(j))
+					newFolderName = op.join(splitDestDict["root"], splitSrcDict["name"] + " " + str(j))
 				bats.createFolder(newFolderName)
 				bats.copyFolderContent(srcCommFolders[i], newFolderName)
 
@@ -732,7 +728,18 @@ def singleFolderCopyNew(srcFolder, destDir, token='BASIC'):
 	if srcFolderOK and destOK:
 		destFolderDict = bats.splitFilePath(destDir)
 
-		if token == 'TIME-STAMP':
+		if token == 'REV':
+			newFolderName = op.join(destDir, srcFolderDict["name"]) + " REV 0"
+			j = 0
+			while bats.isFolder(newFolderName):
+				j = j + 1
+				newFolderName = op.join(destDir, srcFolderDict["name"]) + " REV " + str(j)
+			bats.createFolder(newFolderName)
+			try:
+				bats.copyFolderContent(srcFolder, newFolderName)
+			except Exception as e:
+				errors.append(e.args)
+		elif token == 'TIME-STAMP':
 			today = datetime.now()
 			dateTime = today.strftime("%Y-%m-%d %Hh%Mm%Ss")
 			newFolderName = op.join(destDir, srcFolderDict["name"]) + " " + str(dateTime)
@@ -776,7 +783,7 @@ def singleFolderCopyNew(srcFolder, destDir, token='BASIC'):
 			j = 0
 			while bats.isFolder(newFolderName):
 				j = j + 1
-				newFolderName = op.join(destDir, srcFolderDict["name"]) + str(j)
+				newFolderName = op.join(destDir, srcFolderDict["name"]) + " " - str(j)
 			bats.createFolder(newFolderName)
 			try:
 				bats.copyFolderContent(srcFolder, newFolderName)
@@ -834,6 +841,9 @@ def folderCopyOverwrite(srcDir, destDir):
 			bats.copyFolderContent(srcOnlyFolders[i], newDestFolders[i])
 
 		for i in range(0, len(commFolderNames)):
+			#print(f"SOURCE: {srcCommFolders[i]}")
+			#print(f"DEST: {destCommFolders[i]}")
+			#print(f"COMPARE: {bats.compareTrees(srcCommFolders[i], destCommFolders[i])}")
 			if bats.compareTrees(srcCommFolders[i], destCommFolders[i]) == False:
 				bats.deleteFolder(destCommFolders[i])
 				bats.createFolder(destCommFolders[i])
@@ -860,7 +870,6 @@ def folderCopyOverwrite(srcDir, destDir):
 ' Copies a single folder in the source directory to destination directory.
 ' Overwrites the folders that are common to both directories.
 '''
-
 def singleFolderCopyOverwrite(srcFolder, destDir):
 	srcFolderIsFolder = bats.isFolder(srcFolder)
 	srcFolderReadPermissions = bats.checkReadPermissions(srcFolder)

@@ -102,11 +102,15 @@ class EditProcedureDialog(tk.Tk):
 			directoryName = filedialog.askopenfilename(initialdir="/", title="Select File")
 		else:
 			directoryName = filedialog.askdirectory(initialdir="/", title="Select Folder")
+		self.focus_force()
+		self.grab_set()
 		entrybox.delete(0, 'end')
 		entrybox.insert(0, directoryName)
 
 	def openDestBrowser(self, operation, entrybox):
 		directoryName = filedialog.askdirectory(initialdir="/", title = "Select Folder")
+		self.focus_force()
+		self.grab_set()
 		entrybox.delete(0, 'end')
 		entrybox.insert(0, directoryName)
 

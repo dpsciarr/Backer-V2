@@ -219,5 +219,6 @@ class MainFrame(tk.Frame):
 							self.runConfigTree.insert("", "end", iid=f"{self._currentTreeItemID}", text=selectedItemDict['text'], values=selectedItemDict['values'])
 							self.idleConfigTree.delete(self._currentTreeItemID)
 
+
 	def runBackupConfiguration(self):
-		print("Running Backup")
+		self.application.configurationManager.configurationRunner.run()

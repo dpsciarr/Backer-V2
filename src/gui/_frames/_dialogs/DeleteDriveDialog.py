@@ -29,14 +29,14 @@ class DeleteDriveDialog(tk.Tk):
 			driveObject = self.deviceObject.getDrive(int(driveDigits))
 			self.selectedDriveName = driveObject.driveName
 
-		driveObjects = self.deviceObject.drives
-		driveObjectItems = [(item[0], item[1]) for item in driveObjects.items()]
+		self.driveObjects = self.deviceObject.drives
+		self.driveObjectItems = [(item[0], item[1]) for item in self.driveObjects.items()]
 		driveNames = []
 		driveIDs = []
 		self.driveDict = {}
 		self.driveDictReversed = {}
-		if len(driveObjectItems) > 0:
-			for eachDrive in driveObjectItems:
+		if len(self.driveObjectItems) > 0:
+			for eachDrive in self.driveObjectItems:
 				driveItemName = eachDrive[1].driveName
 				driveItemID = eachDrive[1].driveID
 				driveNames.append(driveItemName)
@@ -68,7 +68,7 @@ class DeleteDriveDialog(tk.Tk):
 		driveID = self.driveDictReversed[self.selectedDriveName]
 		infoSrc = self.application.informationSource.name
 		currentUser = self.application.currentUser
-		currentUderID = self.application.currentUserID
+		currentUserID = self.application.currentUserID
 
 		#Notify user of deletion attempt
 		self.application.outputManager.broadcast(f"Attempting to delete drive {self.selectedDriveName} . . .")

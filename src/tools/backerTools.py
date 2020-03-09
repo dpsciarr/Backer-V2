@@ -7,7 +7,6 @@ import os
 import shutil
 from distutils.dir_util import copy_tree
 
-
 '''
 ' isFolder()
 '
@@ -317,7 +316,6 @@ def createFile(filename):
 def createFolder(folderName):
 	if isFolder(folderName) == False:
 		try:
-			print("FolderName: " + folderName)
 			os.makedirs(folderName)
 		except Exception as e:
 			print(e.args[0])
@@ -354,7 +352,23 @@ def copyFolderContent(srcFolder, destFolder):
 	destFolderOK = isFolder(destFolder)
 
 	if srcFolderOK and destFolderOK:
-		return copy_tree(srcFolder, destFolder)
+		items = os.listdir(srcFolder)
+		for item in items:
+			if isFolder(os.path.join(srcFolder, item)) == True:
+				print("FOLDER: " + str(item))
+				newFolder = createFolder(os.path.join(destFolder, item))
+				copyFolderContent(os.path.join(srcFolder, item), newFolder)
+
+			elif isFile(os.path.join(srcFolder, item)) == True:
+				createFile(os.path.join(destFolder, item))
+				copyFileContent(os.path.join(srcFolder, item), os.path.join(destFolder, item))
+			else:
+				print(item)
+
+		#x = copy_tree(srcFolder, destFolder)
+		#x = shutil.move(srcFolder, destFolder)
+		#print(x)
+		return None
 	else:
 		print("Problem with copyFolderContent")
 		return None

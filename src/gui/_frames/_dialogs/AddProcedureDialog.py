@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog
 from os import sep
 
-class AddProcedureDialog(tk.Tk):
+class AddProcedureDialog(tk.Toplevel):
 	def __init__(self, treeViewFrame):
 		self._application = treeViewFrame.application
 		self._treeViewFrame = treeViewFrame
@@ -39,9 +39,14 @@ class AddProcedureDialog(tk.Tk):
 					digits = digits + i
 			selectedCollectionName = self.collectionDict[int(digits)]
 
-		tk.Tk.__init__(self)
-		self.winfo_toplevel().title("Add Procedure")
-		self.winfo_toplevel().geometry("600x250+400+200")
+
+
+		tk.Toplevel.__init__(self)
+		self.title("Add Procedure")
+		self.geometry("600x250+400+200")
+		#tk.Tk.__init__(self)
+		#self.winfo_toplevel().title("Add Procedure")
+		#self.winfo_toplevel().geometry("600x250+400+200")
 		f = tk.Frame(self, bg='white')
 
 		#Labels
@@ -162,8 +167,12 @@ class AddProcedureDialog(tk.Tk):
 
 						self._treeViewFrame.mainWindow.mainFrame.idleConfigTree.insert("", "end", iid= f"proc{procID}", values = [f"{collectionName}", f"{newProcedureName}"])
 
-						#Add Procedure to TreeView
+						#Add Procedure to Idle TreeView
 						self._treeViewFrame.tree.insert(self.iidFromTree, "end", iid=f"proc{procedureID}", text=f"{newProcedureName}")
+
+						#Add procedure to run configuration dict
+						self._treeViewFrame.application.configurationManager.updateRunConfig(procID, False)
+
 		elif infoSrc == "SOURCE_CONFIG_NO_DB":
 			self.application.outputManager(f"   Procedure '{newProcedureName}' cannot be added to configuration. Connect to database.")
 		else:
@@ -178,11 +187,15 @@ class AddProcedureDialog(tk.Tk):
 			directoryName = filedialog.askopenfilename(initialdir="/", title="Select File")
 		else:
 			directoryName = filedialog.askdirectory(initialdir="/", title="Select Folder")
+		self.focus_force()
+		self.grab_set()
 		entrybox.delete(0, 'end')
 		entrybox.insert(0, directoryName)
 
 	def openDestBrowser(self, operation, entrybox):
 		directoryName = filedialog.askdirectory(initialdir="/", title = "Select Folder")
+		self.focus_force()
+		self.grab_set()
 		entrybox.delete(0, 'end')
 		entrybox.insert(0, directoryName)
 
@@ -204,6 +217,10 @@ class AddProcedureDialog(tk.Tk):
 			self.appendageList.config(state='readonly')
 			self.appendageList.config(values=self.multiFileValues)
 			self.appendageList.set(self.multiFileValues[0])
+		elif "Single Folder" in currOpSelected and "Overwrite" not in currOpSelected:
+			self.appendageList.config(state='readonly')
+			self.appendageList.config(values=self.singleFileValues)
+			self.appendageList.set(self.singleFileValues[0])
 		elif "Folder Copy New" in currOpSelected:
 			self.appendageList.config(state='readonly')
 			self.appendageList.config(values=self.multiFileValues)

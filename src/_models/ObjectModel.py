@@ -631,7 +631,8 @@ class Operation:
 			"Folder Copy New (Time-Stamp)" : 30,
 			"Single Folder Copy New (Date)" : 31,
 			"Single Folder Copy New (Date-Time)" : 32,
-			"Single Folder Copy New (Time-Stamp)" : 33
+			"Single Folder Copy New (Time-Stamp)" : 33,
+			"Single Folder Copy New (Revision)" : 34
 		}
 
 		self._operationsNumToString = {v: k for k, v in self._operations.items()}

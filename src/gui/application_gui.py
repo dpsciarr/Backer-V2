@@ -12,6 +12,7 @@ sys.path.append(frameDir)
 from TreeViewFrame import TreeViewFrame
 from MainFrame import MainFrame
 from OutputFrame import OutputFrame
+from ToolBarFrame import ToolBarFrame
 
 sys.path.remove(frameDir)
 
@@ -42,15 +43,16 @@ class ApplicationWindow(tk.Tk):
 		self.winfo_toplevel().geometry("1200x600+10+10")
 
 		menubar = MainMenuBar(self)
+		self.toolbar = ToolBarFrame(self._application, self)
 
 		#INIT TREEVIEW FRAME (FORMERLY CONFIGURATION FRAME)
-		self.treeFrame = TreeViewFrame(self.application, self)
+		self.treeFrame = TreeViewFrame(self._application, self)
 
 		#INIT MAIN FRAME (FORMERLY DISPLAY FRAME)
-		self.mainFrame = MainFrame(self.application, self)
+		self.mainFrame = MainFrame(self._application, self)
 
 		#INIT OUTPUT FRAME
-		self.outputFrame = OutputFrame(self.application, self)
+		self.outputFrame = OutputFrame(self._application, self)
 
 
 		self.grid_columnconfigure(0, minsize=10, weight=1)
@@ -61,6 +63,7 @@ class ApplicationWindow(tk.Tk):
 		self.grid_rowconfigure(1, minsize=100, weight=2)
 		self.grid_rowconfigure(2, minsize=20, weight=1)
 
+		self.toolbar.grid(row = 0, column = 0, columnspan=3, rowspan = 1, sticky="NEWS")
 		self.treeFrame.grid(row=1, column=0, columnspan=1, rowspan=2, sticky="NEWS")
 		self.mainFrame.grid(row=1, column=1, rowspan=1, columnspan=2, sticky="NEWS")
 		self.outputFrame.grid(row=2, column=1, rowspan=1, columnspan=2, sticky="NEWS")
@@ -70,6 +73,9 @@ class ApplicationWindow(tk.Tk):
 		self.application.initializeApplication()
 		self.treeFrame.buildTreeView(self.application.objectModel.currentUser)
 		self.mainFrame.populateTreeviews()
+
+		icon = tk.PhotoImage(file=os.path.join(self._application.imageDirectory,'Backer_Logo.png'))
+		self.call('wm', 'iconphoto', self._w, icon)
 
 		self.mainloop()
 
@@ -92,12 +98,6 @@ class ApplicationWindow(tk.Tk):
 
 	def exitApplication(self):
 		self.kill()
-
-	def openConfigureDatabaseDialog(self):
-		print("Configure database")
-
-	def openDatabaseTestDialog(self):
-		print("Database Test Dialog")
 
 	def runConfiguration(self):
 		print("Run Config")
@@ -149,15 +149,9 @@ class MainMenuBar(tk.Menu):
 		self.fileMenu.add_command(label="Save Run Configuration...", command=applicationWindow.saveRunConfiguration)
 		self.fileMenu.add_command(label="Load Run Configuration...", command=applicationWindow.loadRunConfiguration)
 		self.fileMenu.add_separator()
-		#self.fileMenu.add_command(label="Export...", command=parent.openExportBackerFileDialog)
-		#self.fileMenu.add_separator()
-		#self.fileMenu.add_command(label="New User...", command=parent.openCreateNewUserDialog)
 		self.fileMenu.add_command(label="Exit", command=applicationWindow.exitApplication)
 
 		self.toolMenu = tk.Menu(self.menubar, tearoff=0)
-		self.toolMenu.add_command(label="Configure Database...", command=applicationWindow.openConfigureDatabaseDialog)
-		self.toolMenu.add_command(label="Test Database Connection", command=applicationWindow.openDatabaseTestDialog)
-		self.toolMenu.add_separator()
 		self.toolMenu.add_command(label="Run Backup...", command=applicationWindow.runConfiguration)
 		self.toolMenu.add_separator()
 		self.toolMenu.add_command(label="Update Configuration File", command=applicationWindow.updateConfigFile)

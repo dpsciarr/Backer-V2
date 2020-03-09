@@ -10,6 +10,7 @@ dbDir = os.path.join(srcDir, "_database")
 cfgDir = os.path.join(srcDir, "cfg")
 modelDir = os.path.join(srcDir, "_models")
 outputDir = os.path.join(srcDir, "gui\\_frames")
+
 sys.path.append(dbDir)
 sys.path.append(cfgDir)
 sys.path.append(modelDir)
@@ -20,6 +21,7 @@ from ConfigurationManager import ConfigurationManager
 from ObjectModel import ObjectModel
 from OutputFrame import OutputFrame as broadcaster
 from ObjectModel import Operation
+from ConfigurationRunner import ConfigurationRunner
 
 sys.path.remove(outputDir)
 sys.path.remove(modelDir)
@@ -49,6 +51,8 @@ class Application:
 		self._applicationDirectory = os.path.dirname(self._srcDirectory)
 		self._databaseDirectory = os.path.join(self._srcDirectory, "_database")	
 		self._configDirectory = os.path.join(self._srcDirectory, "cfg")
+		self._toolsDirectory = os.path.join(self._srcDirectory, "tools")
+		self._imageDirectory = os.path.join(self._srcDirectory, "img")
 
 		# Initialize Application User Properties
 		self._currentUser = ""
@@ -58,6 +62,9 @@ class Application:
 		self._databaseOperator = DatabaseOperator(self)
 		self._configurationManager = ConfigurationManager(self)
 		self._objectModel = ObjectModel(self)
+
+		# Initialize Configuration Runner
+		self._configurationManager.configurationRunner = ConfigurationRunner(self._configurationManager)
 
 		# Initialize the Output Stream
 		self._outputManager = OutputManager(self)
@@ -78,6 +85,15 @@ class Application:
 	@property
 	def configDirectory(self):
 		return self._configDirectory
+
+	@property
+	def toolsDirectory(self):
+		return self._toolsDirectory
+
+	@property
+	def imageDirectory(self):
+		return self._imageDirectory
+	
 
 	@property
 	def informationSource(self):
@@ -392,7 +408,6 @@ class OutputManager:
 	@property
 	def scrollbar(self):
 		return self._scrollbar
-	
 
 	def generateTextBox(self, frameRef):
 		self._textBox = tk.Text(frameRef, height=7, width=100)

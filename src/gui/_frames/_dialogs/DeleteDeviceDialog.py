@@ -68,6 +68,10 @@ class DeleteDeviceDialog(tk.Tk):
 		self.application.outputManager.broadcast(f"Attempting to delete device {self.selectedDeviceName}.")
 
 		if infoSrc == "SOURCE_DATABASE" or infoSrc == "SOURCE_DATABASE_NO_CFG":
+			for eachDriveObject in driveObjectItems:
+				driveID = eachDriveObject[1].driveID
+				self.application.databaseOperator.queries.deleteDrive(driveID)
+
 			#Remove collection from database
 			self.application.databaseOperator.queries.deleteDevice(deviceID)
 

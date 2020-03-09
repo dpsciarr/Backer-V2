@@ -1,5 +1,6 @@
 from tkinter import ttk
 import tkinter as tk
+import os
 
 ###############################################################################################################
 ###############################################################################################################
@@ -19,6 +20,9 @@ class LoginWindow(tk.Tk):
 
 		self._frame = None
 		self.switch_frame(LoginFrame)
+
+		icon = tk.PhotoImage(file=os.path.join(self._application.imageDirectory,'Backer_Logo.png'))
+		self.call('wm', 'iconphoto', self._w, icon)
 
 		self.mainloop()
 
